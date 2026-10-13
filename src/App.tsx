@@ -1934,15 +1934,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         </div>
 
         {/* Card Footer Bar */}
-        <div className="px-3 sm:px-5 py-2.5 sm:py-3 bg-sky-50/60 border-t border-sky-100 flex items-center justify-between text-xs text-sky-400 gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white hover:bg-sky-100 border border-sky-200/60 text-sky-600 font-semibold transition-colors cursor-pointer text-[11px] sm:text-xs"
-          >
-            <X size={12} />
-            <span>Close Window</span>
-          </button>
+        <div className="px-3 sm:px-5 py-2.5 sm:py-3 bg-sky-50/60 border-t border-sky-100 flex items-center justify-end sm:justify-between text-xs text-sky-400 gap-2">
           <div className="hidden sm:flex items-center gap-2 text-[11px] text-sky-400">
             <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-sky-200 font-mono text-[10px]">ESC</kbd> to close</span>
           </div>
