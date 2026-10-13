@@ -27,7 +27,7 @@ export interface PortfolioRow {
 // ─── Supabase Database Functions ─────────────────────────────────────────────
 
 /**
- * Mengambil semua portfolio dari tabel 'portfolios'
+ * Fetch all artworks from 'portfolios' table
  */
 export async function getPortfoliosFromDB(): Promise<PortfolioRow[]> {
   if (!supabase) return []
@@ -46,17 +46,17 @@ export async function getPortfoliosFromDB(): Promise<PortfolioRow[]> {
 }
 
 /**
- * Mengunggah file gambar ke Supabase Storage (Bucket: 'portfolio')
- * Menghasilkan Public URL yang bisa diakses siapa saja
+ * Upload image file to Supabase Storage (Bucket: 'portfolio')
+ * Returns the public URL for web access
  */
 export async function uploadPortfolioImage(file: File): Promise<string> {
-  if (!supabase) throw new Error('Supabase client tidak terkonfigurasi.')
+  if (!supabase) throw new Error('Supabase client is not configured.')
 
   const fileExt = file.name.split('.').pop()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`
   const filePath = `artworks/${fileName}`
 
-  // Upload ke bucket 'portfolio'
+  // Upload to bucket 'portfolio'
   const { error: uploadError } = await supabase.storage
     .from('portfolio')
     .upload(filePath, file, {
@@ -69,7 +69,7 @@ export async function uploadPortfolioImage(file: File): Promise<string> {
     throw uploadError
   }
 
-  // Dapatkan URL publik gambar
+  // Get public image URL
   const { data: publicUrlData } = supabase.storage
     .from('portfolio')
     .getPublicUrl(filePath)
@@ -78,10 +78,10 @@ export async function uploadPortfolioImage(file: File): Promise<string> {
 }
 
 /**
- * Menyimpan data karya baru ke tabel 'portfolios'
+ * Save new artwork item to 'portfolios' table
  */
 export async function insertPortfolioToDB(newItem: Omit<PortfolioRow, 'id' | 'created_at'>): Promise<PortfolioRow> {
-  if (!supabase) throw new Error('Supabase client tidak terkonfigurasi.')
+  if (!supabase) throw new Error('Supabase client is not configured.')
 
   const { data, error } = await supabase
     .from('portfolios')
@@ -98,10 +98,10 @@ export async function insertPortfolioToDB(newItem: Omit<PortfolioRow, 'id' | 'cr
 }
 
 /**
- * Menghapus karya dari tabel 'portfolios' berdasarkan ID
+ * Delete artwork from 'portfolios' table by ID
  */
 export async function deletePortfolioFromDB(id: number): Promise<void> {
-  if (!supabase) throw new Error('Supabase client tidak terkonfigurasi.')
+  if (!supabase) throw new Error('Supabase client is not configured.')
 
   const { error } = await supabase
     .from('portfolios')
@@ -115,10 +115,10 @@ export async function deletePortfolioFromDB(id: number): Promise<void> {
 }
 
 /**
- * Mengubah status is_featured karya
+ * Toggle is_featured status for an artwork
  */
 export async function toggleFeaturedInDB(id: number, isFeatured: boolean): Promise<void> {
-  if (!supabase) throw new Error('Supabase client tidak terkonfigurasi.')
+  if (!supabase) throw new Error('Supabase client is not configured.')
 
   const { error } = await supabase
     .from('portfolios')

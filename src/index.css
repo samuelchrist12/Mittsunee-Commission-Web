@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand palette — soft pastel blue matching carrd */
+  /* Brand palette: soft pastel blue matching carrd */
   --color-sky-50: #EEF4FB;
   --color-sky-100: #D6E7F5;
   --color-sky-200: #9FC5E8;

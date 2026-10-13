@@ -71,7 +71,7 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'illustration',
     name: 'Illustration',
     emoji: '🎨',
-    desc: 'Detailed character illustrations with refined lineart and vibrant coloring.',
+    desc: 'Detailed character illustrations with clean lines and vibrant coloring.',
     types: [
       {
         name: 'Character Illustration',
@@ -82,10 +82,10 @@ const COMMISSION_DATA: CommissionCategory[] = [
           { shot: 'Full Body', usd: 100, idr: 250_000 },
         ],
         addons: [
-          { name: '+1 Character', label: '+100% base price' },
+          { name: 'Additional Character', label: '+100% base price' },
           { name: 'Simple Background', label: 'Free' },
           { name: 'Complex Background', label: '+50% base price' },
-          { name: 'Extra Details / Accessories', label: '+10–20%' },
+          { name: 'Detailed Props / Accessories', label: '+10% to 20%' },
         ],
       },
     ],
@@ -94,7 +94,7 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'chibi',
     name: 'Chibi',
     emoji: '🌸',
-    desc: 'Adorable super-deformed chibi style — perfect for stickers and emotes.',
+    desc: 'Expressive chibi characters, suited for stickers, emotes, and avatars.',
     types: [
       {
         name: 'Chibi Style',
@@ -103,7 +103,7 @@ const COMMISSION_DATA: CommissionCategory[] = [
           { shot: 'Full Body', usd: 25, idr: 95_000 },
         ],
         addons: [
-          { name: '+1 Character', label: '+100% base price' },
+          { name: 'Additional Character', label: '+100% base price' },
           { name: 'Simple Background', label: 'Free' },
           { name: 'Complex Background', label: '+50% base price' },
         ],
@@ -114,16 +114,16 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'skeb',
     name: 'SKEB',
     emoji: '✨',
-    desc: 'Leave the concept to me! Surprise commission — I pick pose, expression, and mood.',
+    desc: 'Surprise commissions where pose, expression, and composition are left to the artist.',
     types: [
       {
-        name: 'Surprise Art (SKEB)',
-        note: 'Concept and style are entirely up to the artist. No revisions on design choices.',
+        name: 'Surprise Commission (SKEB)',
+        note: 'Concept and composition are decided by the artist. Design revisions are not included.',
         prices: [
           { shot: 'Bust Up', usd: 70, idr: 85_000 },
         ],
         addons: [
-          { name: 'Background', label: 'Not included' },
+          { name: 'Background', label: 'Artist choice' },
         ],
       },
     ],
@@ -132,11 +132,11 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'live2d',
     name: 'Live2D',
     emoji: '🎭',
-    desc: 'Fully rigged Live2D VTuber models. Tiers differ in rig complexity and expressions.',
+    desc: 'Layer-separated and rigged Live2D VTuber models ready for tracking software.',
     types: [
       {
-        name: 'Full Body L2D Model',
-        note: 'Tier 1 = basic rig | Tier 2 = advanced physics & expressions | Tier 3 = premium full package',
+        name: 'Full Body Live2D Model',
+        note: 'Tier 1: standard rig | Tier 2: physics and expressions | Tier 3: full model package',
         prices: [
           { shot: 'Tier 1', usd: 300, idr: 1_000_000 },
           { shot: 'Tier 2', usd: 550, idr: 2_500_000 },
@@ -145,13 +145,13 @@ const COMMISSION_DATA: CommissionCategory[] = [
         addons: [
           { name: 'Character Design by Artist', usd: 150, idr: 250_000 },
           { name: 'Dynamic Action Pose', usd: 200, idr: 700_000 },
-          { name: '2nd Outfit', usd: 150, idr: 150_000 },
-          { name: '2nd Hair Style', usd: 150, idr: 150_000 },
-          { name: 'Pet / Prop', usd: 150, idr: 150_000 },
-          { name: 'Riggable Finger Joints', usd: 150, idr: 150_000 },
-          { name: 'Furry Character', usd: 150, idr: 150_000 },
-          { name: 'Hand Toggle', usd: 150, idr: 150_000 },
-          { name: 'Base Body (No Clothing)', usd: 150, idr: 150_000 },
+          { name: 'Alternate Outfit', usd: 150, idr: 150_000 },
+          { name: 'Alternate Hairstyle', usd: 150, idr: 150_000 },
+          { name: 'Pet or Prop Item', usd: 150, idr: 150_000 },
+          { name: 'Articulated Fingers', usd: 150, idr: 150_000 },
+          { name: 'Furry Character Feature', usd: 150, idr: 150_000 },
+          { name: 'Hand Pose Toggle', usd: 150, idr: 150_000 },
+          { name: 'Base Body Model', usd: 150, idr: 150_000 },
         ],
       },
     ],
@@ -163,67 +163,66 @@ const TOS_DATA: ToSSection[] = [
     id: '01',
     title: 'Commercial Usage',
     table: [
-      { tier: 'Tier 0 — Personal', usage: 'Private use only, no monetization', fee: 'Included' },
-      { tier: 'Tier 1 — Streaming', usage: 'VTubing / streaming, under 10K subs', fee: '+10%' },
-      { tier: 'Tier 2 — Content Creator', usage: 'YouTube, social, merch (small scale)', fee: '+25%' },
-      { tier: 'Tier 3 — Commercial', usage: 'Brand, ads, large-scale merch', fee: '+50%' },
+      { tier: 'Tier 0: Personal', usage: 'Private use, wallpapers, non-monetized avatars', fee: 'Included' },
+      { tier: 'Tier 1: Streaming', usage: 'VTubing and streaming channels under 10k followers', fee: '+10%' },
+      { tier: 'Tier 2: Creator', usage: 'Monetized content, YouTube videos, small merchandise', fee: '+25%' },
+      { tier: 'Tier 3: Commercial', usage: 'Company branding, advertising, large merchandise runs', fee: '+50%' },
     ],
     items: [
-      'All commissions default to Tier 0 (Personal).',
-      'Discuss commercial intent before placing your order.',
-      'Upgrading tier after delivery is possible with an additional fee.',
+      'Orders default to Tier 0 (Personal Use).',
+      'Please state any commercial intentions when sending your inquiry.',
+      'Usage rights can be upgraded at a later date with an adjusted fee.',
     ],
   },
   {
     id: '02',
-    title: 'General Rules',
+    title: 'General Guidelines',
     items: [
-      'I have the right to decline any commission for any reason without explaining.',
-      'Do not rush or pressure me about deadlines outside agreed turnaround.',
-      'Please provide clear and complete references — blurry or vague refs may delay work.',
-      'Be respectful and patient. Rude clients will be blocked without refund.',
-      'I may post the finished artwork as part of my portfolio unless NDA is agreed.',
-      'AI-generated references are acceptable for mood boards, but will not be replicated.',
-      'I do not draw: NSFW minors, real person fan art (without explicit consent), extreme gore.',
+      'I reserve the right to decline commissions that do not align with my style.',
+      'Please do not push for rush turnarounds outside agreed milestones.',
+      'Clear references help avoid misunderstandings and delays.',
+      'Communication should remain respectful. Harassment will lead to immediate cancellation.',
+      'Finished pieces may be featured in my public portfolio unless an NDA was agreed upon.',
+      'AI images can be shared as visual mood references, but will not be directly copied.',
+      'I do not accept: explicit minor NSFW, non-consensual real person art, or extreme gore.',
     ],
   },
   {
     id: '03',
-    title: 'Commission Process',
+    title: 'Workflow & Revisions',
     items: [
-      'Fill in the order form or contact me via the listed platforms.',
-      'Wait for confirmation — I will review and reply within 1–3 business days.',
-      'Upon acceptance, a 50% downpayment is required before I start.',
-      'I will share WIP sketches for approval before proceeding to lineart and color.',
-      'Revisions are allowed at sketch stage (up to 2 rounds). Post-lineart revisions cost extra.',
-      'Final file is delivered after full payment is received.',
-      'Estimated turnaround: 1–3 weeks depending on complexity and queue.',
+      'Submit your request through VGen or the direct inquiry channels below.',
+      'I review each request and reply within 1 to 3 business days.',
+      'A 50% deposit is required before work starts on the initial sketch.',
+      'Rough sketches will be shared for feedback before lineart and coloring.',
+      'Two revision rounds are included at the sketch phase. Edits after lineart incur extra fees.',
+      'Full-resolution art files are delivered once the remaining balance is settled.',
+      'Estimated turnaround is 1 to 3 weeks depending on queue position and complexity.',
     ],
   },
   {
     id: '04',
-    title: 'Copyright & Credit',
+    title: 'Copyright & Attribution',
     items: [
-      'I retain full artistic copyright of all created works.',
-      'You may use the artwork for agreed purposes (see Commercial Tier).',
-      'Credit me (@Mittsunee) whenever you post the artwork publicly.',
-      'Do not claim the art as your own creation.',
-      'Do not alter, crop out, or remove my watermark/signature without permission.',
-      'NDA clients: usage remains restricted per our agreement. Reach out before sharing.',
-      'Selling or reselling the raw art files is strictly prohibited.',
+      'The artist retains intellectual property and copyright over the artwork.',
+      'You receive license rights corresponding to your selected usage tier.',
+      'Please credit @Mittsunee whenever posting or showcasing the artwork.',
+      'Do not claim the illustration as your own creation.',
+      'Do not crop, remove, or obscure the artist watermark without written agreement.',
+      'Reselling raw project files or minting the art as NFTs is strictly prohibited.',
     ],
   },
   {
     id: '05',
-    title: 'Payment, Refunds & Rush Fee',
+    title: 'Payments, Refunds & Rush Orders',
     items: [
-      'Accepted payment: PayPal (international), GoPay / DANA / BCA (Indonesia).',
-      '50% downpayment required to start. Remaining 50% due before final delivery.',
-      'Rush fee (delivery under 1 week): +30% of total price.',
-      'Refunds before sketch: full refund (minus transfer fees).',
-      'Refunds after sketch approval: 50% refund only.',
-      'No refunds after lineart is completed.',
-      'If I cancel the order on my end, a full refund will be issued.',
+      'Accepted payment options: PayPal (international) and GoPay, DANA, or BCA (Indonesia).',
+      'A 50% deposit is required to begin. The final 50% is due upon completion.',
+      'Rush orders (completed within 7 days): +30% of the total quote.',
+      'Cancellations before sketching starts receive a full refund minus transfer fees.',
+      'Cancellations during the sketch phase qualify for a 50% refund.',
+      'No refunds are available once lineart has started.',
+      'A full refund will be provided if a commission is cancelled on my end.',
     ],
   },
 ]
@@ -337,18 +336,18 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.div>
 
           <motion.p variants={itemVariants} className="text-sky-500/80 text-xs sm:text-sm md:text-base leading-relaxed max-w-md">
-            Hello! I'm Mittsunee — an illustrator specialising in{' '}
+            Hello! I'm Mittsunee, an illustrator specializing in{' '}
             <span className="text-sky-400 font-semibold">character art</span>,{' '}
             <span className="text-sky-400 font-semibold">chibi</span>, and{' '}
             <span className="text-sky-400 font-semibold">Live2D models</span>.
-            Welcome to my commission space! ✨
+            Welcome to my commission portfolio! ✨
           </motion.p>
 
           {/* In-Hero Navigation Buttons */}
           <motion.div variants={itemVariants} className="w-full max-w-lg space-y-2 pt-0.5">
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
-                <Sparkles size={11} /> Menu Halaman
+                <Sparkles size={11} /> Quick Navigation
               </span>
               <div className="h-px bg-sky-200/50 flex-1" />
             </div>
@@ -358,25 +357,25 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                 {
                   id: 'portfolio' as const,
                   title: 'Portfolio',
-                  desc: 'Gallery Karya',
+                  desc: 'Art Gallery',
                   icon: Palette,
                 },
                 {
                   id: 'pricing' as const,
                   title: 'Commission',
-                  desc: 'Daftar Harga',
+                  desc: 'Price Tiers',
                   icon: Coins,
                 },
                 {
                   id: 'tos' as const,
                   title: 'Terms',
-                  desc: 'Ketentuan',
+                  desc: 'Guidelines',
                   icon: FileText,
                 },
                 {
                   id: 'contact' as const,
                   title: 'Contact',
-                  desc: 'Pemesanan',
+                  desc: 'Order & Links',
                   icon: MessageCircle,
                 },
               ].map(item => (
@@ -624,7 +623,7 @@ function PortfolioOverallLoader() {
         animate={{ opacity: 1, y: 0 }}
         className="text-base font-bold text-sky-950 font-display tracking-wide"
       >
-        Menyiapkan Galeri Karya Mittsunee
+        Loading Gallery Artworks
       </motion.h3>
       <motion.p
         initial={{ opacity: 0 }}
@@ -632,7 +631,7 @@ function PortfolioOverallLoader() {
         transition={{ delay: 0.15 }}
         className="text-xs text-sky-400 mt-1 max-w-xs"
       >
-        Mengambil koleksi artwork terbaik...
+        Fetching recent illustrations and models...
       </motion.p>
 
       {/* Sleek shimmer loading bar */}
@@ -678,7 +677,7 @@ function PortfolioCard({
               <Sparkles size={18} />
             </div>
             <span className="text-[10px] font-semibold text-sky-400 mt-2 animate-pulse tracking-wide">
-              Memuat gambar...
+              Loading artwork...
             </span>
           </div>
         )}
@@ -686,7 +685,7 @@ function PortfolioCard({
         {hasError ? (
           <div className="w-full h-full flex flex-col items-center justify-center text-sky-300 p-4 text-center">
             <Palette size={26} />
-            <span className="text-xs mt-2 text-sky-400 font-medium">Gambar tidak tersedia</span>
+            <span className="text-xs mt-2 text-sky-400 font-medium">Artwork preview unavailable</span>
           </div>
         ) : (
           <img
@@ -727,7 +726,7 @@ function PortfolioCard({
             {item.category}
           </span>
           <span className="text-[11px] text-sky-400 font-medium group-hover:text-sky-600 transition-colors">
-            Lihat Karya ↗
+            View Piece ↗
           </span>
         </div>
       </div>
@@ -942,7 +941,7 @@ function PortfolioSection() {
             {/* Empty State */}
             {filtered.length === 0 && (
               <div className="text-center py-16 text-sky-300">
-                Belum ada karya di kategori ini.
+                No artworks found in this category.
               </div>
             )}
 
@@ -955,7 +954,7 @@ function PortfolioSection() {
                 {isLoadingMore ? (
                   <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/80 px-4 py-2 rounded-full border border-sky-100 shadow-xs">
                     <div className="w-4 h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
-                    <span>Memuat karya selanjutnya...</span>
+                    <span>Loading more pieces...</span>
                   </div>
                 ) : (
                   <button
@@ -963,7 +962,7 @@ function PortfolioSection() {
                     onClick={() => loadNextBatch()}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-sky-50 text-sky-600 font-semibold text-xs border border-sky-200/90 shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer group"
                   >
-                    <span>Muat Lebih Banyak Karya (+8)</span>
+                    <span>Load More Artworks (+8)</span>
                     <span className="text-sky-400 group-hover:translate-y-0.5 transition-transform font-bold">↓</span>
                   </button>
                 )}
@@ -973,7 +972,7 @@ function PortfolioSection() {
             {/* End of list message */}
             {!hasMore && filtered.length > 8 && (
               <div className="text-center py-10 text-xs text-sky-300 font-medium">
-                ✦ Kamu telah melihat semua {filtered.length} karya di kategori ini ✦
+                ✦ You have viewed all {filtered.length} artworks in this category ✦
               </div>
             )}
           </>
@@ -1100,7 +1099,7 @@ function CommissionCard({ category }: { category: CommissionCategory }) {
                         ? addon.label
                         : addon.usd !== undefined
                           ? currency === 'usd' ? formatUSD(addon.usd) : formatIDR(addon.idr ?? 0)
-                          : '—'}
+                          : '-'}
                     </span>
                   </div>
                 ))}
@@ -1465,10 +1464,10 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
   const [isExpanded, setIsExpanded] = useState(false)
 
   const pagesInfo: Record<ActivePage, { title: string; subtitle: string; icon: typeof Palette }> = {
-    portfolio: { title: 'Portfolio Gallery', subtitle: 'Koleksi Artwork & Model', icon: Palette },
-    pricing: { title: 'Commission Prices', subtitle: 'Daftar Harga & Opsi Tambahan', icon: Coins },
-    tos: { title: 'Terms of Service', subtitle: 'Syarat & Ketentuan Komisi', icon: FileText },
-    contact: { title: 'Contact & Order', subtitle: 'Cara Pemesanan & Kontak', icon: MessageCircle },
+    portfolio: { title: 'Portfolio Gallery', subtitle: 'Illustrations and Live2D Artworks', icon: Palette },
+    pricing: { title: 'Commission Prices', subtitle: 'Rates and Options', icon: Coins },
+    tos: { title: 'Terms of Service', subtitle: 'Guidelines and Revisions', icon: FileText },
+    contact: { title: 'Contact & Order', subtitle: 'Direct Links and Order Form', icon: MessageCircle },
   }
 
   const current = pagesInfo[activePage]
@@ -1532,13 +1531,13 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
             </div>
           </div>
 
-          {/* Right: Window Control Buttons (Perbesar & Silang) */}
+          {/* Right: Window Control Buttons (Maximize & Close) */}
           <div className="flex items-center gap-1.5 p-1 rounded-full bg-sky-100/90 border border-sky-200/80 shadow-xs shrink-0">
             {/* Maximize/Expand button */}
             <button
               type="button"
               onClick={() => setIsExpanded(e => !e)}
-              title={isExpanded ? "Ukuran Standar" : "Perbesar Penuh (Fullscreen)"}
+              title={isExpanded ? "Standard Window" : "Expand Fullscreen"}
               className="w-7 h-7 rounded-full bg-white hover:bg-sky-50 text-sky-500 hover:text-sky-700 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-xs"
             >
               {isExpanded ? <Minimize2 size={13} strokeWidth={2.5} /> : <Maximize2 size={13} strokeWidth={2.5} />}
@@ -1547,7 +1546,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
             <button
               type="button"
               onClick={onClose}
-              title="Tutup / Exit (ESC)"
+              title="Close Window (ESC)"
               className="w-7 h-7 rounded-full bg-white hover:bg-rose-500 text-sky-500 hover:text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-xs group"
             >
               <X size={14} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
@@ -1581,10 +1580,10 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-sky-100 border border-sky-200/60 text-sky-600 font-semibold transition-colors cursor-pointer"
           >
             <X size={13} />
-            <span>Tutup & Kembali ke Beranda</span>
+            <span>Close & Return to Home</span>
           </button>
           <div className="hidden sm:flex items-center gap-2 text-[11px] text-sky-400">
-            <span>Tekan <kbd className="px-1.5 py-0.5 rounded bg-white border border-sky-200 font-mono text-[10px]">ESC</kbd> untuk menutup</span>
+            <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-sky-200 font-mono text-[10px]">ESC</kbd> to close</span>
           </div>
           <a
             href="https://vgen.co"
@@ -1607,7 +1606,7 @@ function HomeFooter() {
   return (
     <footer className="w-full py-2.5 px-6 bg-white/40 backdrop-blur-sm border-t border-sky-100/60 shrink-0 text-center select-none">
       <div className="max-w-5xl mx-auto flex items-center justify-between text-[11px] text-sky-400">
-        <span>© {new Date().getFullYear()} <strong>Mittsunee</strong> — All rights reserved</span>
+        <span>© {new Date().getFullYear()} <strong>Mittsunee</strong> · All rights reserved</span>
         <span className="hidden sm:inline text-sky-300">Illustration · Chibi · Live2D</span>
       </div>
     </footer>

@@ -90,13 +90,13 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
             image: item.image_url,
             isFeatured: item.is_featured,
             tags: item.tags || [],
-            dateAdded: item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : 'Aktif',
+            dateAdded: item.created_at ? new Date(item.created_at).toLocaleDateString('en-US') : 'Active',
           }))
           setArtworks(mapped)
         }
       } catch (err: unknown) {
         console.error('Failed to load from Supabase:', err)
-        showToast('⚠️ Gagal memuat data dari Supabase, menggunakan data lokal.')
+        showToast('⚠️ Could not load data from Supabase. Falling back to local data.')
       } finally {
         setIsLoadingDB(false)
       }
@@ -111,7 +111,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      showToast('⚠️ Silakan pilih file gambar (PNG, JPG, WebP)!')
+      showToast('⚠️ Please select a valid image file (PNG, JPG, WebP).')
       return
     }
 
@@ -134,7 +134,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      showToast('⚠️ Silakan pilih file gambar (PNG, JPG, WebP)!')
+      showToast('⚠️ Please select a valid image file (PNG, JPG, WebP).')
       return
     }
 
@@ -181,7 +181,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
     e.preventDefault()
 
     if (!title.trim()) {
-      showToast('⚠️ Mohon isi judul artwork terlebih dahulu!')
+      showToast('⚠️ Please provide an artwork title.')
       return
     }
 
@@ -190,17 +190,16 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
     try {
       let finalImageUrl = imagePreview || '/Original Character.png'
 
-      // Jika Supabase terkonfigurasi dan ada file asli yang dipilih, upload ke Supabase Storage
       if (isSupabaseConfigured && selectedFile) {
-        showToast('⏳ Mengunggah gambar ke Supabase Storage...')
+        showToast('⏳ Uploading image to Supabase Storage...')
         finalImageUrl = await uploadPortfolioImage(selectedFile)
       }
 
       if (isSupabaseConfigured) {
-        showToast('⏳ Menyimpan data ke database Supabase...')
+        showToast('⏳ Saving artwork record to Supabase Database...')
         const savedRow = await insertPortfolioToDB({
           title: title.trim(),
-          subtitle: subtitle.trim() || 'Artwork Baru',
+          subtitle: subtitle.trim() || 'New Artwork',
           category,
           image_url: finalImageUrl,
           is_featured: isFeatured,
@@ -215,34 +214,34 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
           image: savedRow.image_url,
           isFeatured: savedRow.is_featured,
           tags: savedRow.tags,
-          dateAdded: 'Hari ini',
+          dateAdded: 'Today',
         }
 
         setArtworks(prev => [newItem, ...prev])
-        showToast('✨ Berhasil disimpan ke Supabase Database!')
+        showToast('✨ Successfully published to Supabase Database.')
       } else {
         // Fallback demo state
         const newItem: AdminPortfolioItem = {
           id: Date.now(),
           title: title.trim(),
-          subtitle: subtitle.trim() || 'Artwork Baru',
+          subtitle: subtitle.trim() || 'New Artwork',
           category,
           image: finalImageUrl,
-          dateAdded: 'Hari ini',
+          dateAdded: 'Today',
           isFeatured,
           tags: tags.length > 0 ? tags : [category.toUpperCase()],
         }
 
         setArtworks(prev => [newItem, ...prev])
-        showToast('✨ Berhasil mengunggah artwork ke portfolio (Demo Mode)!')
+        showToast('✨ Artwork added to portfolio (Demo Mode).')
       }
 
       handleResetForm()
       setActiveTab('manage')
     } catch (err: unknown) {
       console.error('Submit artwork error:', err)
-      const errorMsg = err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan'
-      showToast(`❌ Gagal: ${errorMsg}`)
+      const errorMsg = err instanceof Error ? err.message : 'An error occurred while saving'
+      showToast(`❌ Error: ${errorMsg}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -265,19 +264,19 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
     if (isSupabaseConfigured) {
       try {
         await toggleFeaturedInDB(id, newStatus)
-        showToast('Status Featured diperbarui di Supabase')
+        showToast('Featured status updated in Supabase.')
       } catch (err) {
         console.error('Error toggling featured:', err)
-        showToast('⚠️ Gagal memperbarui status di Supabase')
+        showToast('⚠️ Could not update featured status in Supabase.')
       }
     } else {
-      showToast('Status Featured diperbarui')
+      showToast('Featured status updated.')
     }
   }
 
   // Delete artwork
   const handleDeleteArtwork = async (id: number, itemTitle: string) => {
-    if (!window.confirm(`Yakin ingin menghapus "${itemTitle}" dari portfolio?`)) return
+    if (!window.confirm(`Are you sure you want to remove "${itemTitle}" from the portfolio?`)) return
 
     // Optimistic UI update
     setArtworks(prev => prev.filter(item => item.id !== id))
@@ -285,13 +284,13 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
     if (isSupabaseConfigured) {
       try {
         await deletePortfolioFromDB(id)
-        showToast(`🗑️ "${itemTitle}" berhasil dihapus dari Supabase`)
+        showToast(`🗑️ "${itemTitle}" deleted from Supabase.`)
       } catch (err) {
         console.error('Error deleting from Supabase:', err)
-        showToast('⚠️ Gagal menghapus dari Supabase')
+        showToast('⚠️ Could not delete from Supabase.')
       }
     } else {
-      showToast(`🗑️ "${itemTitle}" telah dihapus dari portfolio`)
+      showToast(`🗑️ "${itemTitle}" removed from portfolio.`)
     }
   }
 
@@ -357,7 +356,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               </div>
               <p className="text-xs text-sky-400 flex items-center gap-1.5 font-medium">
                 <span className="font-mono text-[11px] bg-slate-100 px-1.5 py-0.2 rounded text-slate-500 border border-slate-200">/cyela</span>
-                <span>• Manajemen Portfolio & Upload</span>
+                <span>• Portfolio Management & Upload</span>
               </p>
             </div>
           </div>
@@ -373,12 +372,12 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               }`}
               title={
                 isSupabaseConfigured
-                  ? 'Tersambung ke Supabase Cloud Database'
-                  : 'Belum terhubung ke Supabase (menggunakan penyimpanan lokal demo)'
+                  ? 'Connected to Supabase Cloud Database'
+                  : 'Not connected to Supabase (using demo local storage)'
               }
             >
               <Database size={12} className={isSupabaseConfigured ? 'text-emerald-600' : 'text-amber-600'} />
-              <span>{isSupabaseConfigured ? 'Supabase: Terhubung 🟢' : 'Supabase: Demo Mode 🟡'}</span>
+              <span>{isSupabaseConfigured ? 'Supabase: Connected 🟢' : 'Supabase: Demo Mode 🟡'}</span>
               {isLoadingDB && <RefreshCw size={11} className="animate-spin text-emerald-600 ml-1" />}
             </div>
 
@@ -386,10 +385,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               type="button"
               onClick={onExit}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 transition-all active:scale-95 cursor-pointer shadow-2xs group"
-              title="Kembali ke tampilan website publik"
+              title="Return to public portfolio website"
             >
               <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-              <span>Kembali ke Website</span>
+              <span>Back to Website</span>
             </button>
           </div>
         </div>
@@ -404,7 +403,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               <FolderHeart size={20} />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-sky-400 uppercase tracking-wider">Total Karya</p>
+              <p className="text-[11px] font-medium text-sky-400 uppercase tracking-wider">Total Artworks</p>
               <h3 className="text-xl font-bold text-sky-950">{countStats.total}</h3>
             </div>
           </div>
@@ -444,13 +443,13 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               <HardDrive size={20} />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-sky-400 uppercase tracking-wider">Skeb / Lainnya</p>
+              <p className="text-[11px] font-medium text-sky-400 uppercase tracking-wider">Skeb / Other</p>
               <h3 className="text-xl font-bold text-sky-950">{countStats.skeb}</h3>
             </div>
           </div>
         </div>
 
-        {/* Tab Selector: Upload Baru VS Kelola Karya */}
+        {/* Tab Selector: Upload New vs Manage Artworks */}
         <div className="flex items-center justify-between border-b border-sky-100 pb-2 gap-4 flex-wrap">
           <div className="flex items-center gap-2 bg-sky-100/60 p-1 rounded-2xl">
             <button
@@ -463,7 +462,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               }`}
             >
               <Plus size={15} />
-              <span>Unggah Artwork Baru</span>
+              <span>Upload New Artwork</span>
             </button>
             <button
               type="button"
@@ -475,13 +474,13 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               }`}
             >
               <Grid size={15} />
-              <span>Koleksi Portfolio ({artworks.length})</span>
+              <span>Portfolio Collection ({artworks.length})</span>
             </button>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-sky-400">
             <Info size={14} />
-            <span>Perubahan tersimpan otomatis di browser (Demo Mode)</span>
+            <span>Database status: {isSupabaseConfigured ? 'Synced with Supabase' : 'Demo Local Mode'}</span>
           </div>
         </div>
 
@@ -493,10 +492,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               <div>
                 <h2 className="text-lg font-bold text-sky-950 flex items-center gap-2">
                   <UploadCloud className="text-sky-500" size={20} />
-                  Formulir Upload Karya
+                  Artwork Upload Form
                 </h2>
                 <p className="text-xs text-sky-400 mt-1">
-                  Tambahkan artwork terbaru ke gallery portfolio Mittsunee.
+                  Publish new illustrations, chibis, or models to the public portfolio gallery.
                 </p>
               </div>
 
@@ -504,7 +503,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                 {/* File Dropzone Area */}
                 <div>
                   <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider mb-2">
-                    File Gambar Artwork *
+                    Artwork Image *
                   </label>
                   <div
                     onDragOver={e => e.preventDefault()}
@@ -533,16 +532,16 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                         />
                         <div className="space-y-1 min-w-0 flex-1">
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">
-                            <Check size={11} /> File Terpilih
+                            <Check size={11} /> File Selected
                           </span>
                           <p className="text-xs font-bold text-sky-900 truncate">
                             {fileName || 'Artwork Image'}
                           </p>
                           <p className="text-[11px] text-sky-400">
-                            Ukuran: {fileSize || '~1.2 MB'}
+                            Size: {fileSize || '~1.2 MB'}
                           </p>
                           <p className="text-[11px] text-sky-500 underline pt-1">
-                            Klik untuk mengganti gambar
+                            Click to choose a different file
                           </p>
                         </div>
                       </div>
@@ -552,10 +551,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                           <UploadCloud size={24} />
                         </div>
                         <p className="text-xs font-bold text-sky-900">
-                          Tarik dan lepas gambar disini, atau <span className="text-sky-500 underline">pilih dari file</span>
+                          Drag and drop an image here, or <span className="text-sky-500 underline">browse files</span>
                         </p>
                         <p className="text-[11px] text-sky-400">
-                          Mendukung PNG, JPG, WebP (Rekomendasi rasio portrait atau persegi)
+                          Supports PNG, JPG, and WebP (Portrait or square aspect ratio recommended)
                         </p>
                       </div>
                     )}
@@ -563,7 +562,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
 
                   {/* Preset quick buttons */}
                   <div className="mt-2.5 flex items-center gap-2 flex-wrap">
-                    <span className="text-[11px] text-sky-400 font-medium">Contoh Cepat:</span>
+                    <span className="text-[11px] text-sky-400 font-medium">Quick Presets:</span>
                     {SAMPLE_PRESET_IMAGES.map((preset, idx) => (
                       <button
                         key={idx}
@@ -581,40 +580,40 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                   </div>
                 </div>
 
-                {/* Form Fields: Judul & Subtitle */}
+                {/* Form Fields: Title & Subtitle */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider mb-1.5">
-                      Judul Karya *
+                      Artwork Title *
                     </label>
                     <input
                       type="text"
                       required
                       value={title}
                       onChange={e => setTitle(e.target.value)}
-                      placeholder="Contoh: Starlight Kitsune"
+                      placeholder="e.g. Starlight Kitsune"
                       className="w-full px-3.5 py-2.5 rounded-xl border border-sky-200 text-xs text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 bg-white shadow-2xs"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider mb-1.5">
-                      Tipe / Sub-Judul
+                      Subtitle / Shot Type
                     </label>
                     <input
                       type="text"
                       value={subtitle}
                       onChange={e => setSubtitle(e.target.value)}
-                      placeholder="Contoh: Full Body + Detailed BG"
+                      placeholder="e.g. Full Body + Detailed Background"
                       className="w-full px-3.5 py-2.5 rounded-xl border border-sky-200 text-xs text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 bg-white shadow-2xs"
                     />
                   </div>
                 </div>
 
-                {/* Kategori Radio Selector */}
+                {/* Category Radio Selector */}
                 <div>
                   <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider mb-2">
-                    Kategori Portfolio *
+                    Portfolio Category *
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {[
@@ -644,7 +643,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                   <div>
                     <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider mb-1.5">
-                      Tag Artwork
+                      Artwork Tags
                     </label>
                     <div className="flex items-center gap-2">
                       <input
@@ -657,7 +656,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                             handleAddTag()
                           }
                         }}
-                        placeholder="Ketik tag & tekan enter"
+                        placeholder="Type tag and press enter"
                         className="flex-1 px-3.5 py-2 rounded-xl border border-sky-200 text-xs text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 bg-white"
                       />
                       <button
@@ -690,7 +689,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
 
                   <div>
                     <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider mb-1.5">
-                      Opsi Tampilan
+                      Display Options
                     </label>
                     <label className="flex items-center gap-3 p-3 rounded-xl border border-sky-200/80 bg-sky-50/40 hover:bg-sky-50 cursor-pointer transition-colors">
                       <input
@@ -702,10 +701,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                       <div>
                         <span className="text-xs font-bold text-sky-900 flex items-center gap-1.5">
                           <Star size={13} className="text-amber-400 fill-amber-400" />
-                          Tandai sebagai Featured
+                          Mark as Featured
                         </span>
                         <p className="text-[11px] text-sky-400">
-                          Akan disorot di galeri utama portfolio
+                          Pin this piece to highlighted spots in the gallery
                         </p>
                       </div>
                     </label>
@@ -722,12 +721,12 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                     {isSubmitting ? (
                       <>
                         <RefreshCw size={15} className="animate-spin" />
-                        <span>Menyimpan Karya...</span>
+                        <span>Saving Artwork...</span>
                       </>
                     ) : (
                       <>
                         <Check size={16} />
-                        <span>Publikasikan ke Portfolio</span>
+                        <span>Publish to Portfolio</span>
                       </>
                     )}
                   </button>
@@ -749,10 +748,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                 <div>
                   <h3 className="text-sm font-bold text-sky-950 flex items-center gap-2">
                     <Eye size={16} className="text-sky-500" />
-                    Live Preview Galeri Publik
+                    Public Gallery Live Preview
                   </h3>
                   <p className="text-[11px] text-sky-400">
-                    Tampilan kartu seperti yang dilihat pengunjung web.
+                    Card appearance as seen by site visitors.
                   </p>
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">
@@ -788,10 +787,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                     {/* Title overlay at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 p-3.5 text-white">
                       <p className="text-xs font-bold leading-tight drop-shadow-xs">
-                        {title || 'Judul Artwork Contoh'}
+                        {title || 'Sample Artwork Title'}
                       </p>
                       <p className="text-[11px] text-sky-200 mt-0.5 leading-tight">
-                        {subtitle || 'Sub Judul / Tipe Shot'}
+                        {subtitle || 'Subtitle / Shot Type'}
                       </p>
                       {tags.length > 0 && (
                         <div className="flex gap-1 mt-1.5 flex-wrap">
@@ -814,12 +813,12 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               <div className="bg-sky-50/80 rounded-2xl p-4 border border-sky-100/80 space-y-2 text-xs text-sky-700">
                 <p className="font-bold flex items-center gap-1.5">
                   <Sparkles size={14} className="text-sky-500" />
-                  Tips Upload Mittsunee:
+                  Mittsunee Upload Notes:
                 </p>
                 <ul className="list-disc list-inside space-y-1 text-[11px] text-sky-600">
-                  <li>Gunakan format rasio vertikal (3:4 atau 4:5) untuk hasil terbaik di galeri.</li>
-                  <li>Kategori "Live2D" akan otomatis dikelompokkan pada filter model VTuber.</li>
-                  <li>Semua item yang ditambahkan tersimpan pada memori aplikasi selama sesi berjalan.</li>
+                  <li>Vertical aspect ratios (3:4 or 4:5) look best in the gallery grid.</li>
+                  <li>Selecting "Live2D" automatically routes to the VTuber model filter.</li>
+                  <li>Uploaded items sync directly to the portfolio database.</li>
                 </ul>
               </div>
             </div>
@@ -834,7 +833,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               {/* Category Pills */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
                 {[
-                  { id: 'all', label: 'Semua' },
+                  { id: 'all', label: 'All' },
                   { id: 'illustration', label: 'Illustration' },
                   { id: 'chibi', label: 'Chibi' },
                   { id: 'live2d', label: 'Live2D' },
@@ -863,7 +862,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Cari karya..."
+                    placeholder="Search artworks..."
                     className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-sky-200 text-xs text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-400/40 bg-white"
                   />
                   {searchQuery && (
@@ -906,8 +905,8 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
             {filteredArtworks.length === 0 ? (
               <div className="py-16 text-center space-y-3 bg-sky-50/40 rounded-2xl border border-dashed border-sky-200">
                 <ImageIcon size={36} className="text-sky-300 mx-auto" />
-                <p className="text-sm font-bold text-sky-800">Tidak ada artwork yang cocok</p>
-                <p className="text-xs text-sky-400">Coba ubah kata kunci pencarian atau filter kategori.</p>
+                <p className="text-sm font-bold text-sky-800">No matching artworks found</p>
+                <p className="text-xs text-sky-400">Try adjusting your search query or switching categories.</p>
               </div>
             ) : viewMode === 'grid' ? (
               /* GRID VIEW */
@@ -940,7 +939,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                             ? 'bg-amber-400 text-white shadow-xs'
                             : 'bg-white/80 text-slate-400 hover:text-amber-500'
                         }`}
-                        title={item.isFeatured ? 'Featured item' : 'Tandai Featured'}
+                        title={item.isFeatured ? 'Featured piece' : 'Mark as Featured'}
                       >
                         <Star size={12} fill={item.isFeatured ? 'currentColor' : 'none'} />
                       </button>
@@ -951,7 +950,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                           type="button"
                           onClick={() => setPreviewItem(item)}
                           className="w-8 h-8 rounded-full bg-white text-sky-700 hover:bg-sky-50 flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-110"
-                          title="Lihat Pratinjau Penuh"
+                          title="View full preview"
                         >
                           <Eye size={14} />
                         </button>
@@ -959,7 +958,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                           type="button"
                           onClick={() => handleDeleteArtwork(item.id, item.title)}
                           className="w-8 h-8 rounded-full bg-rose-500 text-white hover:bg-rose-600 flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-110"
-                          title="Hapus Karya"
+                          title="Delete artwork"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -978,14 +977,14 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                       </div>
 
                       <div className="mt-2.5 pt-2 border-t border-sky-50 flex items-center justify-between text-[10px] text-sky-400">
-                        <span>{item.dateAdded || 'Aktif'}</span>
+                        <span>{item.dateAdded || 'Active'}</span>
                         <div className="flex items-center gap-1.5">
                           <button
                             type="button"
                             onClick={() => setPreviewItem(item)}
                             className="text-sky-500 hover:text-sky-700 font-semibold cursor-pointer"
                           >
-                            Lihat
+                            View
                           </button>
                           <span>•</span>
                           <button
@@ -993,7 +992,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                             onClick={() => handleDeleteArtwork(item.id, item.title)}
                             className="text-rose-500 hover:text-rose-700 font-semibold cursor-pointer"
                           >
-                            Hapus
+                            Delete
                           </button>
                         </div>
                       </div>
@@ -1007,11 +1006,11 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                 <table className="w-full text-left text-xs">
                   <thead className="bg-sky-50/80 text-sky-700 font-bold border-b border-sky-100">
                     <tr>
-                      <th className="py-3 px-4">Karya</th>
-                      <th className="py-3 px-4">Kategori</th>
-                      <th className="py-3 px-4">Tag</th>
+                      <th className="py-3 px-4">Artwork</th>
+                      <th className="py-3 px-4">Category</th>
+                      <th className="py-3 px-4">Tags</th>
                       <th className="py-3 px-4">Featured</th>
-                      <th className="py-3 px-4 text-right">Aksi</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-sky-100/60">
@@ -1065,7 +1064,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                               type="button"
                               onClick={() => setPreviewItem(item)}
                               className="p-1.5 rounded-lg text-sky-500 hover:bg-sky-100 cursor-pointer"
-                              title="Lihat Gambar"
+                              title="View image"
                             >
                               <Eye size={14} />
                             </button>
@@ -1073,7 +1072,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                               type="button"
                               onClick={() => handleDeleteArtwork(item.id, item.title)}
                               className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 cursor-pointer"
-                              title="Hapus Karya"
+                              title="Delete artwork"
                             >
                               <Trash2 size={14} />
                             </button>
@@ -1132,7 +1131,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
 
               <div className="flex items-center justify-between text-xs text-sky-500 pt-1">
                 <span>{previewItem.subtitle}</span>
-                <span className="text-sky-400">{previewItem.dateAdded || 'Aktif'}</span>
+                <span className="text-sky-400">{previewItem.dateAdded || 'Active'}</span>
               </div>
             </motion.div>
           </motion.div>
