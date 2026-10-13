@@ -499,49 +499,82 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
   }
 
   return (
-    <section id="hero" className="relative flex-1 flex items-center justify-center overflow-hidden px-4 sm:px-6 py-2 sm:py-4">
+    <section id="hero" className="relative flex-1 flex items-center justify-center overflow-hidden px-3 sm:px-6 py-1 sm:py-4">
       {/* Decorative background orbs */}
       <div className="absolute top-12 left-1/4 w-72 h-72 md:w-96 md:h-96 rounded-full bg-sky-200/20 blur-3xl pointer-events-none" />
       <div className="absolute bottom-12 right-1/4 w-60 h-60 md:w-80 md:h-80 rounded-full bg-sky-300/15 blur-3xl pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto w-full grid md:grid-cols-2 gap-6 lg:gap-12 items-center my-auto">
+      <div className="max-w-5xl mx-auto w-full grid md:grid-cols-2 gap-3 sm:gap-6 lg:gap-12 items-center my-auto">
         {/* Left: text content & in-hero navigation */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="flex flex-col items-start gap-3 sm:gap-4"
+          className="flex flex-col items-center md:items-start text-center md:text-left gap-2 sm:gap-3 md:gap-4 w-full"
         >
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2">
-            <span className="tag text-xs">
-              <Sparkles size={12} />
+          {/* Status Badges */}
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 sm:gap-2">
+            <span className="tag text-[10px] sm:text-xs py-0.5 px-2.5">
+              <Sparkles size={11} />
               Artist / Illustrator
             </span>
             <button
               type="button"
               onClick={() => onNavigate('pricing')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
+              className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
                 COMMISSION_STATUS === 'open'
-                  ? 'bg-green-50 text-green-700 border border-green-200 shadow-sm'
-                  : 'bg-red-50 text-red-700 border border-red-200 shadow-sm'
+                  ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
+                  : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full animate-pulse ${
+              <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse ${
                 COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
               }`} />
               {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
             </button>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          {/* Mittsunee Logo */}
+          <motion.div variants={itemVariants} className="flex justify-center md:justify-start">
             <img
               src="/Type%20Logo.png"
               alt="Mittsunee"
-              className="h-12 sm:h-16 w-auto object-contain"
+              className="h-8 sm:h-11 md:h-16 w-auto object-contain select-none"
             />
           </motion.div>
 
-          <motion.p variants={itemVariants} className="text-sky-500/80 text-xs sm:text-sm md:text-base leading-relaxed max-w-md">
+          {/* Mobile Character Art (shown only on mobile < md to keep viewport compact and balanced) */}
+          <div className="md:hidden relative flex justify-center items-center my-0.5">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-28 h-28 rounded-full border border-dashed border-sky-200/50" />
+              <div className="w-20 h-20 rounded-full bg-sky-100/40 absolute" />
+            </div>
+            <motion.img
+              src="/Original%20Character.png"
+              alt="Mittsunee Original Character"
+              className="relative z-10 w-full max-w-[130px] max-h-[19vh] object-contain drop-shadow-md select-none"
+              animate={{ y: [0, -5, 0] }}
+              transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+            />
+            {/* Floating chips on mobile */}
+            <button
+              type="button"
+              onClick={() => onNavigate('pricing')}
+              className="absolute top-1 -left-2 card px-2 py-0.5 text-[9px] font-semibold text-sky-500 shadow-2xs flex items-center gap-1 cursor-pointer"
+            >
+              <Star size={9} fill="currentColor" /> Chibi
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('portfolio')}
+              className="absolute bottom-1 -right-2 card px-2 py-0.5 text-[9px] font-semibold text-sky-500 shadow-2xs flex items-center gap-1 cursor-pointer"
+            >
+              Live2D
+            </button>
+          </div>
+
+          {/* Bio text */}
+          <motion.p variants={itemVariants} className="text-sky-500/80 text-[11px] sm:text-xs md:text-base leading-snug sm:leading-relaxed max-w-xs md:max-w-md">
             Hello! I'm Mittsunee, an illustrator specializing in{' '}
             <span className="text-sky-400 font-semibold">character art</span>,{' '}
             <span className="text-sky-400 font-semibold">chibi</span>, and{' '}
@@ -550,15 +583,15 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.p>
 
           {/* In-Hero Navigation Buttons */}
-          <motion.div variants={itemVariants} className="w-full max-w-lg space-y-2 pt-0.5">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
-                <Sparkles size={11} /> Quick Navigation
+          <motion.div variants={itemVariants} className="w-full max-w-sm md:max-w-lg space-y-1 sm:space-y-2 pt-0.5">
+            <div className="flex items-center gap-2 justify-center md:justify-start">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
+                <Sparkles size={10} /> Quick Navigation
               </span>
-              <div className="h-px bg-sky-200/50 flex-1" />
+              <div className="h-px bg-sky-200/50 flex-1 hidden md:block" />
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
               {[
                 {
                   id: 'portfolio' as const,
@@ -591,15 +624,16 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                   onClick={() => onNavigate(item.id)}
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="group flex flex-col items-center justify-center p-2 sm:p-2.5 rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-sm hover:shadow transition-all text-center cursor-pointer"
+                  className="group flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-xl sm:rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-1 transition-colors group-hover:scale-105">
-                    <item.icon size={16} />
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-0.5 sm:mb-1 transition-colors group-hover:scale-105">
+                    <item.icon size={14} className="sm:hidden" />
+                    <item.icon size={16} className="hidden sm:block" />
                   </div>
-                  <span className="text-xs font-bold text-sky-600 group-hover:text-sky-700 leading-tight">
+                  <span className="text-[10px] sm:text-xs font-bold text-sky-600 group-hover:text-sky-700 leading-tight">
                     {item.title}
                   </span>
-                  <span className="text-[10px] text-sky-400 font-medium">
+                  <span className="hidden sm:block text-[10px] text-sky-400 font-medium">
                     {item.desc}
                   </span>
                 </motion.button>
@@ -608,13 +642,13 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.div>
 
           {/* Action Row: Primary VGen Order + Social Links */}
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-0.5">
-            <a href="https://vgen.co" target="_blank" rel="noreferrer" className="btn-primary !py-2 !px-4 text-xs sm:text-sm">
-              <ShoppingCart size={14} />
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 pt-0.5">
+            <a href="https://vgen.co" target="_blank" rel="noreferrer" className="btn-primary !py-1.5 !px-3 sm:!py-2 sm:!px-4 text-xs sm:text-sm">
+              <ShoppingCart size={13} />
               Order via VGen
             </a>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1 sm:gap-1.5">
               {socials.map(s => (
                 <motion.a
                   key={s.label}
@@ -624,21 +658,22 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                   title={s.label}
                   whileHover={{ scale: 1.15, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-8 h-8 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors shadow-2xs"
                 >
-                  <s.icon size={15} />
+                  <s.icon size={13} className="sm:hidden" />
+                  <s.icon size={15} className="hidden sm:block" />
                 </motion.a>
               ))}
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Right: Character art */}
+        {/* Right: Character art for desktop */}
         <motion.div
           initial={{ opacity: 0, x: 40, scale: 0.95 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="relative flex justify-center items-end"
+          className="hidden md:flex relative justify-center items-end"
         >
           {/* Decorative ring */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -651,7 +686,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           <motion.img
             src="/Original%20Character.png"
             alt="Mittsunee Original Character"
-            className="relative z-10 w-full max-w-[210px] sm:max-w-xs md:max-w-sm max-h-[30vh] sm:max-h-[38vh] md:max-h-[48vh] object-contain drop-shadow-xl"
+            className="relative z-10 w-full max-w-[210px] sm:max-w-xs md:max-w-sm max-h-[30vh] sm:max-h-[38vh] md:max-h-[48vh] object-contain drop-shadow-xl select-none"
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
           />
@@ -900,23 +935,25 @@ function PortfolioCard({
       className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-2xs hover:shadow-md transition-transform duration-200 hover:-translate-y-1.5 will-change-transform flex flex-col"
     >
       {/* Proportionate Aspect Ratio Frame */}
-      <div className="relative w-full aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-2">
+      <div className="relative w-full aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-1 sm:p-2">
         {/* Lightweight Skeleton until image is loaded */}
         {!isLoaded && !hasError && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 animate-pulse pointer-events-none">
-            <div className="w-10 h-10 rounded-full bg-sky-200/50 flex items-center justify-center text-sky-400">
-              <Sparkles size={18} />
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 animate-pulse pointer-events-none p-2 text-center">
+            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-sky-200/50 flex items-center justify-center text-sky-400">
+              <Sparkles size={14} className="sm:hidden" />
+              <Sparkles size={18} className="hidden sm:block" />
             </div>
-            <span className="text-[10px] font-semibold text-sky-400 mt-2 tracking-wide">
+            <span className="text-[9px] sm:text-[10px] font-semibold text-sky-400 mt-1.5 tracking-wide">
               Loading artwork...
             </span>
           </div>
         )}
 
         {hasError ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-sky-300 p-4 text-center">
-            <Palette size={26} />
-            <span className="text-xs mt-2 text-sky-400 font-medium">Artwork preview unavailable</span>
+          <div className="w-full h-full flex flex-col items-center justify-center text-sky-300 p-2 text-center">
+            <Palette size={20} className="sm:hidden" />
+            <Palette size={26} className="hidden sm:block" />
+            <span className="text-[10px] sm:text-xs mt-1 text-sky-400 font-medium">Artwork preview unavailable</span>
           </div>
         ) : (
           <img
@@ -929,7 +966,7 @@ function PortfolioCard({
               setHasError(true)
               setIsLoaded(true)
             }}
-            className={`w-full h-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-105 will-change-transform ${
+            className={`w-full h-full object-contain rounded-lg sm:rounded-xl transition-transform duration-300 group-hover:scale-105 will-change-transform ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -937,27 +974,28 @@ function PortfolioCard({
 
         {/* Hover overlay with zoom icon */}
         {isLoaded && !hasError && (
-          <div className="absolute inset-0 bg-sky-950/0 group-hover:bg-sky-950/15 transition-colors duration-200 flex items-center justify-center pointer-events-none rounded-2xl">
-            <div className="w-10 h-10 rounded-full bg-white/95 shadow-md flex items-center justify-center text-sky-600 scale-90 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200">
-              <ZoomIn size={18} />
+          <div className="absolute inset-0 bg-sky-950/0 group-hover:bg-sky-950/15 transition-colors duration-200 flex items-center justify-center pointer-events-none rounded-xl sm:rounded-2xl">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 shadow-md flex items-center justify-center text-sky-600 scale-90 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200">
+              <ZoomIn size={15} className="sm:hidden" />
+              <ZoomIn size={18} className="hidden sm:block" />
             </div>
           </div>
         )}
       </div>
 
       {/* Card Info */}
-      <div className="p-3.5 flex-1 flex flex-col justify-between">
+      <div className="p-2 sm:p-3 flex-1 flex flex-col justify-between">
         <div>
-          <p className="text-sky-950 font-bold text-sm truncate" title={item.title}>
+          <p className="text-sky-950 font-bold text-xs sm:text-sm truncate" title={item.title}>
             {item.title}
           </p>
-          <p className="text-sky-400 text-xs truncate mt-0.5">{item.subtitle}</p>
+          <p className="text-sky-400 text-[10px] sm:text-xs truncate mt-0.5">{item.subtitle}</p>
         </div>
-        <div className="mt-2.5 pt-2 border-t border-sky-50 flex items-center justify-between">
-          <span className="tag text-[10px] capitalize py-0.5 px-2 font-semibold">
+        <div className="mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t border-sky-50 flex items-center justify-between">
+          <span className="tag text-[9px] sm:text-[10px] capitalize py-0.5 px-1.5 sm:px-2 font-semibold">
             {item.category}
           </span>
-          <span className="text-[11px] text-sky-400 font-medium group-hover:text-sky-600 transition-colors">
+          <span className="text-[9px] sm:text-[11px] text-sky-400 font-medium group-hover:text-sky-600 transition-colors">
             View Piece ↗
           </span>
         </div>
@@ -1098,7 +1136,7 @@ function PortfolioSection() {
   }, [loadNextBatch, visibleCount, hasMore, filter])
 
   return (
-    <section ref={sectionRef} id="portfolio" className="py-6 sm:py-10 px-4 sm:px-6">
+    <section ref={sectionRef} id="portfolio" className="py-4 sm:py-10 px-2 sm:px-6">
       <div className="max-w-5xl mx-auto">
         {/* Step 1: Overall Section Loading Animation */}
         {isInitialLoading ? (
@@ -1110,11 +1148,11 @@ function PortfolioSection() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="text-center mb-8 sm:mb-10"
+              className="text-center mb-4 sm:mb-10"
             >
-              <p className="text-sky-400 text-sm font-medium mb-1.5">✦ My Works</p>
-              <h2 className="section-title">Portfolio Gallery</h2>
-              <p className="section-subtitle mt-1.5 max-w-md mx-auto text-xs sm:text-sm">
+              <p className="text-sky-400 text-xs sm:text-sm font-medium mb-1">✦ My Works</p>
+              <h2 className="section-title text-xl sm:text-3xl">Portfolio Gallery</h2>
+              <p className="section-subtitle mt-1 max-w-md mx-auto text-[11px] sm:text-sm">
                 A glimpse into my art. Click any piece to view it in full.
               </p>
             </motion.div>
@@ -1124,13 +1162,13 @@ function PortfolioSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="flex flex-wrap justify-center gap-2 mb-8 sm:mb-10"
+              className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-10"
             >
               {FILTER_TABS.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => handleFilterChange(tab.id)}
-                  className={`relative px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 cursor-pointer ${
+                  className={`relative px-3 sm:px-5 py-1 sm:py-2 rounded-full text-[11px] sm:text-sm font-medium transition-colors duration-200 cursor-pointer ${
                     filter === tab.id
                       ? 'text-white'
                       : 'text-sky-400 hover:text-sky-500 hover:bg-sky-50'
@@ -1149,8 +1187,8 @@ function PortfolioSection() {
               ))}
             </motion.div>
 
-            {/* Step 3: Fast, Stable, Hardware-Accelerated Responsive Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            {/* Step 3: Fast, Stable, Hardware-Accelerated Responsive Grid (2 columns on mobile) */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-5">
               {displayedItems.map((item, index) => (
                 <PortfolioCard
                   key={item.id}
@@ -1166,7 +1204,7 @@ function PortfolioSection() {
 
             {/* Empty State */}
             {filtered.length === 0 && (
-              <div className="text-center py-16 text-sky-300">
+              <div className="text-center py-16 text-sky-300 text-xs sm:text-sm">
                 No artworks found in this category.
               </div>
             )}
@@ -1175,22 +1213,22 @@ function PortfolioSection() {
             {hasMore && (
               <div
                 ref={sentinelRef}
-                className="w-full py-6 flex items-center justify-center text-xs"
+                className="w-full py-4 sm:py-6 flex items-center justify-center text-xs"
               >
                 {isLoadingMore ? (
-                  <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/90 px-4 py-2 rounded-full border border-sky-100 shadow-xs animate-pulse">
-                    <div className="w-4 h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
+                  <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/90 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-sky-100 shadow-xs animate-pulse text-xs">
+                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
                     <span>Loading more artworks...</span>
                   </div>
                 ) : (
-                  <div className="h-6 w-full" />
+                  <div className="h-4 w-full" />
                 )}
               </div>
             )}
 
             {/* End of list message */}
             {!hasMore && filtered.length > 6 && (
-              <div className="text-center py-10 text-xs text-sky-300 font-medium">
+              <div className="text-center py-8 text-xs text-sky-300 font-medium">
                 ✦ You have viewed all {filtered.length} artworks in this category ✦
               </div>
             )}
@@ -1699,7 +1737,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 md:p-8 bg-sky-950/45 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-5 md:p-8 bg-sky-950/45 backdrop-blur-md"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.88, y: 35 }}
@@ -1710,23 +1748,23 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         className={`relative w-full bg-white/95 backdrop-blur-xl shadow-2xl border border-sky-100 flex flex-col overflow-hidden transition-all duration-300 ${
           isExpanded
             ? 'max-w-[98vw] h-[97vh] rounded-2xl'
-            : 'max-w-5xl max-h-[92vh] h-[88vh] rounded-3xl'
+            : 'max-w-5xl max-h-[96vh] h-[93vh] sm:max-h-[92vh] sm:h-[88vh] rounded-2xl sm:rounded-3xl'
         }`}
       >
         {/* Card Header / Window Controls */}
-        <div className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3 bg-white/95 backdrop-blur-md border-b border-sky-100/80 gap-3">
+        <div className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white/95 backdrop-blur-md border-b border-sky-100/80 gap-2 sm:gap-3">
           {/* Left: Active Page Indicator & Quick Switcher Tabs */}
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-4 min-w-0">
             {/* Active Page Badge */}
-            <div className="flex items-center gap-2 text-sky-600 text-xs font-semibold shrink-0">
-              <span className="w-7 h-7 rounded-lg bg-sky-100/80 text-sky-500 flex items-center justify-center shadow-xs">
-                <CurrentIcon size={14} />
+            <div className="flex items-center gap-1.5 sm:gap-2 text-sky-600 text-xs font-semibold shrink-0">
+              <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-100/80 text-sky-500 flex items-center justify-center shadow-xs">
+                <CurrentIcon size={13} />
               </span>
               <span className="hidden sm:inline font-bold tracking-wide">{current.title}</span>
             </div>
 
             {/* Quick Page Switcher Tabs */}
-            <div className="flex items-center gap-1 bg-sky-50/80 p-1 rounded-full border border-sky-100/70">
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-sky-50/80 p-0.5 sm:p-1 rounded-full border border-sky-100/70">
               {[
                 { id: 'portfolio' as const, label: 'Portfolio', icon: Palette },
                 { id: 'pricing' as const, label: 'Commission', icon: Coins },
@@ -1737,13 +1775,13 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
                   key={tab.id}
                   type="button"
                   onClick={() => onNavigate(tab.id)}
-                  className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-all cursor-pointer ${
                     activePage === tab.id
                       ? 'bg-sky-400 text-white shadow-xs'
                       : 'text-sky-500 hover:text-sky-700 hover:bg-sky-100/60'
                   }`}
                 >
-                  <tab.icon size={13} />
+                  <tab.icon size={12} className="sm:size-[13px]" />
                   <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
@@ -1751,24 +1789,24 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
           </div>
 
           {/* Right: Window Control Buttons (Maximize & Close) */}
-          <div className="flex items-center gap-1.5 p-1 rounded-full bg-sky-100/90 border border-sky-200/80 shadow-xs shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-sky-100/90 border border-sky-200/80 shadow-xs shrink-0">
             {/* Maximize/Expand button */}
             <button
               type="button"
               onClick={() => setIsExpanded(e => !e)}
               title={isExpanded ? "Standard Window" : "Expand Fullscreen"}
-              className="w-7 h-7 rounded-full bg-white hover:bg-sky-50 text-sky-500 hover:text-sky-700 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-xs"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white hover:bg-sky-50 text-sky-500 hover:text-sky-700 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-xs"
             >
-              {isExpanded ? <Minimize2 size={13} strokeWidth={2.5} /> : <Maximize2 size={13} strokeWidth={2.5} />}
+              {isExpanded ? <Minimize2 size={12} strokeWidth={2.5} /> : <Maximize2 size={12} strokeWidth={2.5} />}
             </button>
             {/* Close/Exit button */}
             <button
               type="button"
               onClick={onClose}
               title="Close Window (ESC)"
-              className="w-7 h-7 rounded-full bg-white hover:bg-rose-500 text-sky-500 hover:text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-xs group"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white hover:bg-rose-500 text-sky-500 hover:text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-xs group"
             >
-              <X size={14} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+              <X size={13} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
             </button>
           </div>
         </div>
@@ -1792,14 +1830,14 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         </div>
 
         {/* Card Footer Bar */}
-        <div className="px-5 py-3 bg-sky-50/60 border-t border-sky-100 flex items-center justify-between text-xs text-sky-400">
+        <div className="px-3 sm:px-5 py-2.5 sm:py-3 bg-sky-50/60 border-t border-sky-100 flex items-center justify-between text-xs text-sky-400 gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-sky-100 border border-sky-200/60 text-sky-600 font-semibold transition-colors cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white hover:bg-sky-100 border border-sky-200/60 text-sky-600 font-semibold transition-colors cursor-pointer text-[11px] sm:text-xs"
           >
-            <X size={13} />
-            <span>Close & Return to Home</span>
+            <X size={12} />
+            <span>Close Window</span>
           </button>
           <div className="hidden sm:flex items-center gap-2 text-[11px] text-sky-400">
             <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-sky-200 font-mono text-[10px]">ESC</kbd> to close</span>
