@@ -650,16 +650,25 @@ function PortfolioOverallLoader() {
 
 function PortfolioCard({
   item,
+  index = 0,
   onClick,
 }: {
   item: PortfolioItem
+  index?: number
   onClick: () => void
 }) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 32 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.45,
+        delay: Math.min((index % 6) * 0.07, 0.35),
+        ease: [0.22, 1, 0.36, 1],
+      }}
       onClick={onClick}
       className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-2xs hover:shadow-md transition-transform duration-200 hover:-translate-y-1.5 will-change-transform flex flex-col"
     >
@@ -726,7 +735,7 @@ function PortfolioCard({
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -735,7 +744,7 @@ function PortfolioSection() {
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [visibleCount, setVisibleCount] = useState(8)
+  const [visibleCount, setVisibleCount] = useState(6)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
 
   const sentinelRef = useRef<HTMLDivElement>(null)
@@ -792,32 +801,32 @@ function PortfolioSection() {
   // Reset pagination count when filter tab changes
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter)
-    setVisibleCount(8)
+    setVisibleCount(6)
     isLoadingMoreRef.current = false
     setIsLoadingMore(false)
   }
 
-  // Load next chunk of 8 items
+  // Load next chunk of 6 items automatically on scroll
   const loadNextBatch = useCallback(() => {
     if (isLoadingMoreRef.current || !hasMoreRef.current) return
     isLoadingMoreRef.current = true
     setIsLoadingMore(true)
 
-    // Smooth state update with micro-delay for clean transition
     setTimeout(() => {
-      setVisibleCount(prev => prev + 8)
+      setVisibleCount(prev => prev + 6)
       setIsLoadingMore(false)
       isLoadingMoreRef.current = false
-    }, 120)
+    }, 220)
   }, [])
 
-  // Highly performant Infinite Scroll using native IntersectionObserver (zero layout thrashing)
+  // Auto-trigger infinite scroll on container and window scroll
   useEffect(() => {
     const sentinel = sentinelRef.current
     if (!sentinel) return
 
     const scrollContainer = sentinel.closest('.overflow-y-auto') as HTMLElement | null
 
+    // 1. Primary IntersectionObserver
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0]?.isIntersecting) {
@@ -826,14 +835,41 @@ function PortfolioSection() {
       },
       {
         root: scrollContainer || null,
-        rootMargin: '450px',
+        rootMargin: '350px 0px',
         threshold: 0,
       }
     )
     observer.observe(sentinel)
 
+    // 2. Active container scroll listener
+    const handleScroll = () => {
+      if (!scrollContainer) return
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer
+      if (scrollTop + clientHeight >= scrollHeight - 380) {
+        loadNextBatch()
+      }
+    }
+
+    // 3. Fallback window scroll listener
+    const handleWindowScroll = () => {
+      if (!sentinelRef.current) return
+      const rect = sentinelRef.current.getBoundingClientRect()
+      if (rect.top <= window.innerHeight + 380) {
+        loadNextBatch()
+      }
+    }
+
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+    }
+    window.addEventListener('scroll', handleWindowScroll, { passive: true })
+
     return () => {
       observer.disconnect()
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll)
+      }
+      window.removeEventListener('scroll', handleWindowScroll)
     }
   }, [loadNextBatch, visibleCount, hasMore])
 
@@ -891,10 +927,11 @@ function PortfolioSection() {
 
             {/* Step 3: Fast, Stable, Hardware-Accelerated Responsive Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {displayedItems.map(item => (
+              {displayedItems.map((item, index) => (
                 <PortfolioCard
                   key={item.id}
                   item={item}
+                  index={index}
                   onClick={() => {
                     const globalIdx = items.findIndex(p => p.id === item.id)
                     setLightboxIndex(globalIdx)
@@ -910,32 +947,25 @@ function PortfolioSection() {
               </div>
             )}
 
-            {/* Step 4: Sentinel element for infinite scroll */}
+            {/* Step 4: Automatic Sentinel element for seamless infinite scroll (No button) */}
             {hasMore && (
               <div
                 ref={sentinelRef}
-                className="w-full py-8 flex flex-col items-center justify-center gap-3 text-xs"
+                className="w-full py-6 flex items-center justify-center text-xs"
               >
                 {isLoadingMore ? (
-                  <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/80 px-4 py-2 rounded-full border border-sky-100 shadow-xs">
+                  <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/90 px-4 py-2 rounded-full border border-sky-100 shadow-xs animate-pulse">
                     <div className="w-4 h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
-                    <span>Loading more pieces...</span>
+                    <span>Loading more artworks...</span>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => loadNextBatch()}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-sky-50 text-sky-600 font-semibold text-xs border border-sky-200/90 shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer group"
-                  >
-                    <span>Load More Artworks (+8)</span>
-                    <span className="text-sky-400 group-hover:translate-y-0.5 transition-transform font-bold">↓</span>
-                  </button>
+                  <div className="h-6 w-full" />
                 )}
               </div>
             )}
 
             {/* End of list message */}
-            {!hasMore && filtered.length > 8 && (
+            {!hasMore && filtered.length > 6 && (
               <div className="text-center py-10 text-xs text-sky-300 font-medium">
                 ✦ You have viewed all {filtered.length} artworks in this category ✦
               </div>
