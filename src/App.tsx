@@ -473,6 +473,24 @@ const stagger: Variants = {
 // ─── In-Hero Navigation (Header Navbar removed per request) ───────────────────
 
 
+function FacebookIcon({ size = 18, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  )
+}
+
 // ─── Hero Section ────────────────────────────────────────────────────────────
 
 interface HeroSectionProps {
@@ -481,10 +499,10 @@ interface HeroSectionProps {
 
 function HeroSection({ onNavigate }: HeroSectionProps) {
   const socials = [
-    { icon: Globe, label: 'VGen', href: 'https://vgen.co', color: '#74A2DD' },
-    { icon: Heart, label: 'Instagram', href: 'https://instagram.com', color: '#E1306C' },
-    { icon: MessageCircle, label: 'WhatsApp', href: 'https://wa.me', color: '#25D366' },
-    { icon: Mail, label: 'Email', href: 'mailto:mittsunee@email.com', color: '#74A2DD' },
+    { icon: Globe, label: 'VGen', href: 'https://vgen.co/Mittsunee', color: '#74A2DD' },
+    { icon: Heart, label: 'Instagram', href: 'https://www.instagram.com/mittsunee/', color: '#E1306C' },
+    { icon: FacebookIcon, label: 'Facebook', href: 'https://www.facebook.com/gazzela.chi', color: '#1877F2' },
+    { icon: Mail, label: 'Email', href: 'mailto:mittsune112@gmail.com', color: '#74A2DD' },
   ]
 
   const navItems = [
@@ -611,7 +629,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
         {/* 7. Action Row: CTA Button + 4 Social Circles */}
         <div className="flex items-center justify-center gap-2 pt-0.5">
           <a
-            href="https://vgen.co"
+            href="https://vgen.co/Mittsunee"
             target="_blank"
             rel="noreferrer"
             className="btn-primary !py-1.5 !px-3 text-xs flex items-center gap-1 shadow-2xs"
@@ -723,7 +741,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
 
           {/* Action Row: Primary VGen Order + Social Links */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-start gap-3 pt-0.5">
-            <a href="https://vgen.co" target="_blank" rel="noreferrer" className="btn-primary !py-2 !px-4 text-sm">
+            <a href="https://vgen.co/Mittsunee" target="_blank" rel="noreferrer" className="btn-primary !py-2 !px-4 text-sm">
               <ShoppingCart size={13} />
               Order via VGen
             </a>
@@ -1284,21 +1302,14 @@ function PortfolioSection() {
               {FILTER_TABS.map(tab => (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => handleFilterChange(tab.id)}
-                  className={`relative px-3 sm:px-5 py-1 sm:py-2 rounded-full text-[11px] sm:text-sm font-medium transition-colors duration-200 cursor-pointer ${
+                  className={`px-3 sm:px-5 py-1 sm:py-2 rounded-full text-[11px] sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                     filter === tab.id
-                      ? 'text-white'
-                      : 'text-sky-400 hover:text-sky-500 hover:bg-sky-50'
+                      ? 'bg-sky-400 text-white shadow-xs'
+                      : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
                   }`}
                 >
-                  {filter === tab.id && (
-                    <motion.div
-                      layoutId="pill"
-                      className="absolute inset-0 rounded-full bg-sky-300"
-                      style={{ zIndex: -1 }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
                   {tab.label}
                 </button>
               ))}
@@ -1376,29 +1387,27 @@ function PortfolioSection() {
 function CurrencyToggle() {
   const { currency, toggle } = useCurrency()
   return (
-    <div className="inline-flex items-center gap-1 p-1 rounded-full bg-sky-50 border border-sky-100">
+    <div className="inline-flex items-center gap-1 p-1 rounded-full bg-sky-100/70 border border-sky-200/60 shadow-2xs">
       <button
+        type="button"
         onClick={() => currency === 'idr' && toggle()}
-        className={`relative px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-          currency === 'usd' ? 'text-white' : 'text-sky-400 hover:text-sky-500'
+        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+          currency === 'usd'
+            ? 'bg-sky-500 text-white shadow-xs'
+            : 'text-sky-600 hover:text-sky-800 hover:bg-sky-50/60'
         }`}
       >
-        {currency === 'usd' && (
-          <motion.div layoutId="currency-pill" className="absolute inset-0 rounded-full bg-sky-300" style={{ zIndex: -1 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }} />
-        )}
         $ USD
       </button>
       <button
+        type="button"
         onClick={() => currency === 'usd' && toggle()}
-        className={`relative px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-          currency === 'idr' ? 'text-white' : 'text-sky-400 hover:text-sky-500'
+        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+          currency === 'idr'
+            ? 'bg-sky-500 text-white shadow-xs'
+            : 'text-sky-600 hover:text-sky-800 hover:bg-sky-50/60'
         }`}
       >
-        {currency === 'idr' && (
-          <motion.div layoutId="currency-pill" className="absolute inset-0 rounded-full bg-sky-300" style={{ zIndex: -1 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }} />
-        )}
         Rp IDR
       </button>
     </div>
@@ -1517,27 +1526,20 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
         </motion.div>
 
         {/* Category tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-8">
           {COMMISSION_DATA.map(cat => (
             <button
               key={cat.id}
+              type="button"
               onClick={() => setActiveTab(cat.id)}
-              className={`relative flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === cat.id
-                  ? 'text-white'
-                  : 'text-sky-400 hover:text-sky-500 hover:bg-sky-50'
+                  ? 'bg-sky-400 text-white shadow-xs'
+                  : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
               }`}
             >
-              {activeTab === cat.id && (
-                <motion.div
-                  layoutId="pricing-pill"
-                  className="absolute inset-0 rounded-full bg-sky-400"
-                  style={{ zIndex: -1 }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
-              )}
               <span>{cat.emoji}</span>
-              {cat.name}
+              <span>{cat.name}</span>
             </button>
           ))}
         </div>
@@ -1566,7 +1568,7 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
         >
           <p className="text-sky-400 text-sm">
             Ready to order?{' '}
-            <a href="https://vgen.co" target="_blank" rel="noreferrer" className="text-sky-500 font-semibold hover:text-sky-400 underline underline-offset-2">
+            <a href="https://vgen.co/Mittsunee" target="_blank" rel="noreferrer" className="text-sky-500 font-semibold hover:text-sky-400 underline underline-offset-2">
               Place your order via VGen
             </a>
             {' '}or{' '}
@@ -1711,58 +1713,65 @@ function ContactSection() {
     {
       label: 'VGen',
       description: 'Order commissions directly',
-      href: 'https://vgen.co',
+      href: 'https://vgen.co/Mittsunee',
       icon: ShoppingCart,
       primary: true,
     },
     {
-      label: 'WhatsApp',
-      description: 'Chat for quick inquiries',
-      href: 'https://wa.me',
-      icon: MessageCircle,
+      label: 'Instagram',
+      description: 'DM for art & inquiries',
+      href: 'https://www.instagram.com/mittsunee/',
+      icon: Heart,
+      primary: false,
+    },
+    {
+      label: 'Facebook',
+      description: 'Direct message & updates',
+      href: 'https://www.facebook.com/gazzela.chi',
+      icon: FacebookIcon,
       primary: false,
     },
     {
       label: 'Email',
-      description: 'For formal inquiries & NDA',
-      href: 'mailto:mittsunee@email.com',
+      description: 'Formal inquiries & invoices',
+      href: 'mailto:mittsune112@gmail.com',
       icon: Mail,
       primary: false,
     },
   ]
 
   const socials = [
-    { label: 'Heart', href: 'https://instagram.com', icon: Heart },
-    { label: 'VGen', href: 'https://vgen.co', icon: Globe },
-    { label: 'Email', href: 'mailto:mittsunee@email.com', icon: Mail },
-    { label: 'WhatsApp', href: 'https://wa.me', icon: MessageCircle },
+    { label: 'VGen', href: 'https://vgen.co/Mittsunee', icon: Globe },
+    { label: 'Instagram', href: 'https://www.instagram.com/mittsunee/', icon: Heart },
+    { label: 'Facebook', href: 'https://www.facebook.com/gazzela.chi', icon: FacebookIcon },
+    { label: 'Email', href: 'mailto:mittsune112@gmail.com', icon: Mail },
   ]
 
   return (
-    <section id="contact" className="py-6 sm:py-10 px-4 sm:px-6">
-      <div className="max-w-3xl mx-auto">
+    <section id="contact" className="py-6 sm:py-10 px-3 sm:px-6">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <motion.p variants={fadeUp} className="text-sky-400 text-sm font-medium mb-2">✦ Get In Touch</motion.p>
-          <motion.h2 variants={fadeUp} className="section-title">Contact & Order</motion.h2>
-          <motion.p variants={fadeUp} className="section-subtitle mt-2">
+          <motion.p variants={fadeUp} className="text-sky-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">✦ Get In Touch</motion.p>
+          <motion.h2 variants={fadeUp} className="section-title text-2xl sm:text-3xl">Contact & Order</motion.h2>
+          <motion.p variants={fadeUp} className="section-subtitle mt-1 sm:mt-2 text-xs sm:text-sm">
             Ready to commission? Here's how to reach me!
           </motion.p>
         </motion.div>
 
-        {/* Contact cards */}
+        {/* Contact cards - 2 per row on mobile, 4 per row on desktop */}
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="grid sm:grid-cols-3 gap-4 mb-12"
+          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-8 sm:mb-12"
         >
           {contacts.map(c => (
             <motion.a
@@ -1772,29 +1781,30 @@ function ContactSection() {
               rel="noreferrer"
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className={`card p-5 flex flex-col items-center text-center gap-3 transition-all duration-200 ${
-                c.primary ? 'bg-sky-300 border-sky-300 !shadow-[0_8px_24px_rgba(116,162,221,0.4)]' : ''
+              className={`card p-3 sm:p-5 flex flex-col items-center text-center gap-2 sm:gap-3 transition-all duration-200 cursor-pointer rounded-2xl ${
+                c.primary ? 'bg-sky-400 text-white border-sky-400 !shadow-[0_8px_24px_rgba(116,162,221,0.35)]' : 'bg-white'
               }`}
             >
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${
                 c.primary ? 'bg-white/25 text-white' : 'bg-sky-50 text-sky-400'
               }`}>
-                <c.icon size={22} />
+                <c.icon size={18} className="sm:hidden" />
+                <c.icon size={22} className="hidden sm:block" />
               </div>
-              <div>
-                <p className={`font-semibold text-base ${c.primary ? 'text-white' : 'text-sky-600'}`}>{c.label}</p>
-                <p className={`text-xs mt-0.5 ${c.primary ? 'text-white/80' : 'text-sky-400'}`}>{c.description}</p>
+              <div className="w-full">
+                <p className={`font-bold text-xs sm:text-base leading-tight ${c.primary ? 'text-white' : 'text-sky-700'}`}>{c.label}</p>
+                <p className={`text-[10px] sm:text-xs mt-0.5 line-clamp-1 ${c.primary ? 'text-white/85' : 'text-sky-400'}`}>{c.description}</p>
               </div>
-              <span className={`flex items-center gap-1 text-xs font-medium ${c.primary ? 'text-white/90' : 'text-sky-400'}`}>
-                {c.primary ? 'Order Now' : 'Open Chat'}
-                <ExternalLink size={11} />
+              <span className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold ${c.primary ? 'text-white' : 'text-sky-500'}`}>
+                {c.primary ? 'Order Now' : 'Visit Link'}
+                <ExternalLink size={10} className="sm:size-[11px]" />
               </span>
             </motion.a>
           ))}
         </motion.div>
 
         {/* Divider */}
-        <div className="divider mb-10" />
+        <div className="divider mb-6 sm:mb-10" />
 
         {/* Social links row */}
         <motion.div
@@ -1802,7 +1812,7 @@ function ContactSection() {
           whileInView="show"
           viewport={{ once: true }}
           variants={stagger}
-          className="flex justify-center gap-4"
+          className="flex justify-center gap-3 sm:gap-4"
         >
           {socials.map(s => (
             <motion.a
@@ -1814,15 +1824,16 @@ function ContactSection() {
               variants={fadeUp}
               whileHover={{ scale: 1.15, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-11 h-11 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors"
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors shadow-2xs cursor-pointer"
             >
-              <s.icon size={18} />
+              <s.icon size={16} className="sm:hidden" />
+              <s.icon size={18} className="hidden sm:block" />
             </motion.a>
           ))}
         </motion.div>
 
         {/* Credit note */}
-        <div className="text-center mt-10 text-sky-300 text-xs">
+        <div className="text-center mt-6 sm:mt-10 text-sky-300 text-xs">
           <p>Please credit <strong>@Mittsunee</strong> when sharing commissioned works.</p>
         </div>
       </div>
@@ -1964,7 +1975,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
             <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-sky-200 font-mono text-[10px]">ESC</kbd> to close</span>
           </div>
           <a
-            href="https://vgen.co"
+            href="https://vgen.co/Mittsunee"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-sky-400 hover:bg-sky-500 text-white font-semibold transition-all shadow-sm"
