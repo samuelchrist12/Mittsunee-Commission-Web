@@ -1781,22 +1781,29 @@ function ContactSection() {
               rel="noreferrer"
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className={`card p-3 sm:p-5 flex flex-col items-center text-center gap-2 sm:gap-3 transition-all duration-200 cursor-pointer rounded-2xl ${
-                c.primary ? 'bg-sky-400 text-white border-sky-400 !shadow-[0_8px_24px_rgba(116,162,221,0.35)]' : 'bg-white'
+              className={`card p-3 sm:p-5 flex flex-col items-center text-center gap-2 sm:gap-3 transition-all duration-200 cursor-pointer rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${
+                c.primary ? 'border-sky-300/80 shadow-xs' : ''
               }`}
             >
-              <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${
-                c.primary ? 'bg-white/25 text-white' : 'bg-sky-50 text-sky-400'
-              }`}>
-                <c.icon size={18} className="sm:hidden" />
-                <c.icon size={22} className="hidden sm:block" />
+              {c.primary && (
+                <span className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-sky-400 text-white text-[9px] font-bold shadow-2xs">
+                  Main
+                </span>
+              )}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 transition-colors shrink-0">
+                <c.icon size={20} className="sm:hidden" />
+                <c.icon size={24} className="hidden sm:block" />
               </div>
               <div className="w-full">
-                <p className={`font-bold text-xs sm:text-base leading-tight ${c.primary ? 'text-white' : 'text-sky-700'}`}>{c.label}</p>
-                <p className={`text-[10px] sm:text-xs mt-0.5 line-clamp-1 ${c.primary ? 'text-white/85' : 'text-sky-400'}`}>{c.description}</p>
+                <p className="font-bold text-xs sm:text-base text-sky-700 group-hover:text-sky-800 leading-tight">
+                  {c.label}
+                </p>
+                <p className="text-[10px] sm:text-xs text-sky-400 mt-0.5 line-clamp-1">
+                  {c.description}
+                </p>
               </div>
-              <span className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold ${c.primary ? 'text-white' : 'text-sky-500'}`}>
-                {c.primary ? 'Order Now' : 'Visit Link'}
+              <span className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-sky-500 group-hover:text-sky-600 mt-auto">
+                <span>{c.primary ? 'Order Now' : 'Visit Link'}</span>
                 <ExternalLink size={10} className="sm:size-[11px]" />
               </span>
             </motion.a>
