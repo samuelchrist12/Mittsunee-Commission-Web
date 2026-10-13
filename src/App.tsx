@@ -9,7 +9,7 @@ import {
   Maximize2, Minimize2
 } from 'lucide-react'
 import AdminPortfolioPage from './AdminPortfolioPage'
-import { isSupabaseConfigured, getPortfoliosFromDB, getThumbnailUrl } from './lib/supabase'
+import { isSupabaseConfigured, getPortfoliosFromDB } from './lib/supabase'
 
 
 
@@ -657,17 +657,14 @@ function PortfolioCard({
 }) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
-  // Request lightweight ~100KB thumbnail from CDN instead of loading 2160x2160 raw files
-  const [imgSrc, setImgSrc] = useState(() => getThumbnailUrl(item.image, 540, 80))
 
   return (
     <div
       onClick={onClick}
       className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-2xs hover:shadow-md transition-transform duration-200 hover:-translate-y-1.5 will-change-transform flex flex-col"
-      style={{ contentVisibility: 'auto', containIntrinsicSize: '280px 380px' }}
     >
-      {/* Consistent 3:4 Aspect Ratio Frame */}
-      <div className="relative w-full aspect-3/4 overflow-hidden bg-sky-50 flex items-center justify-center">
+      {/* Proportionate Aspect Ratio Frame */}
+      <div className="relative w-full aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-2">
         {/* Lightweight Skeleton until image is loaded */}
         {!isLoaded && !hasError && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 animate-pulse pointer-events-none">
@@ -687,21 +684,16 @@ function PortfolioCard({
           </div>
         ) : (
           <img
-            src={imgSrc}
+            src={item.image}
             alt={item.title}
             loading="lazy"
             decoding="async"
             onLoad={() => setIsLoaded(true)}
             onError={() => {
-              if (imgSrc !== item.image) {
-                // Fallback to original image if CDN transformation endpoint is unavailable
-                setImgSrc(item.image)
-              } else {
-                setHasError(true)
-                setIsLoaded(true)
-              }
+              setHasError(true)
+              setIsLoaded(true)
             }}
-            className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 will-change-transform ${
+            className={`w-full h-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-105 will-change-transform ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -709,7 +701,7 @@ function PortfolioCard({
 
         {/* Hover overlay with zoom icon */}
         {isLoaded && !hasError && (
-          <div className="absolute inset-0 bg-sky-950/0 group-hover:bg-sky-950/20 transition-colors duration-200 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 bg-sky-950/0 group-hover:bg-sky-950/15 transition-colors duration-200 flex items-center justify-center pointer-events-none rounded-2xl">
             <div className="w-10 h-10 rounded-full bg-white/95 shadow-md flex items-center justify-center text-sky-600 scale-90 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200">
               <ZoomIn size={18} />
             </div>

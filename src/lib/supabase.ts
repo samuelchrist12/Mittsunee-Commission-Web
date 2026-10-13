@@ -25,14 +25,9 @@ export interface PortfolioRow {
 }
 
 /**
- * Generates an optimized, CDN-transformed thumbnail URL for Supabase Storage images.
- * Reduces image payload by ~80-90% and VRAM texture overhead by ~95% for 60fps scrolling.
+ * Returns the direct artwork image URL ensuring true aspect ratio and pristine quality.
  */
-export function getThumbnailUrl(url: string, width = 540, quality = 80): string {
-  if (!url) return url
-  if (url.includes('/storage/v1/object/public/')) {
-    return url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + `?width=${width}&quality=${quality}`
-  }
+export function getThumbnailUrl(url: string): string {
   return url
 }
 

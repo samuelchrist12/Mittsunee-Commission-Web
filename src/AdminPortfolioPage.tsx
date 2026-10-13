@@ -12,8 +12,7 @@ import {
   uploadPortfolioImage,
   insertPortfolioToDB,
   deletePortfolioFromDB,
-  toggleFeaturedInDB,
-  getThumbnailUrl
+  toggleFeaturedInDB
 } from './lib/supabase'
 
 export interface AdminPortfolioItem {
@@ -763,11 +762,11 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
               {/* Mock Portfolio Card */}
               <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100 flex justify-center">
                 <div className="w-full max-w-xs group relative rounded-2xl overflow-hidden bg-white border border-sky-100 shadow-md hover:shadow-xl transition-all">
-                  <div className="relative aspect-3/4 overflow-hidden bg-sky-100">
+                  <div className="relative aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-2">
                     <img
                       src={imagePreview || '/Original Character.png'}
                       alt={title || 'Preview Artwork'}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-contain rounded-xl transition-transform duration-500 group-hover:scale-105"
                     />
 
                     {/* Category & Featured Badge */}
@@ -918,13 +917,13 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                     className="group bg-white rounded-2xl border border-sky-100 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col"
                   >
                     {/* Thumbnail */}
-                    <div className="relative aspect-3/4 overflow-hidden bg-sky-100">
+                    <div className="relative aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-2">
                       <img
-                        src={getThumbnailUrl(item.image, 480, 80)}
+                        src={item.image}
                         alt={item.title}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 will-change-transform"
+                        className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-300 will-change-transform"
                       />
                       {/* Top Badges */}
                       <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
@@ -1022,7 +1021,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <img
-                              src={getThumbnailUrl(item.image, 120, 75)}
+                              src={item.image}
                               alt={item.title}
                               loading="lazy"
                               decoding="async"
