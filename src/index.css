@@ -32,6 +32,7 @@
     -webkit-font-smoothing: antialiased;
     overscroll-behavior: none;
     height: 100%;
+    cursor: url('/cursor.svg') 2 2, auto;
   }
 
   section[id] {
@@ -47,6 +48,37 @@
     /* Subtle crosshatch grid matching carrd aesthetic */
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M 28 0 L 0 0 0 28' fill='none' stroke='rgba(116%2C162%2C221%2C0.12)' stroke-width='1'/%3E%3C/svg%3E");
     background-size: 28px 28px;
+    cursor: url('/cursor.svg') 2 2, auto;
+  }
+
+  /* Interactive elements use custom cursor with pointer fallback */
+  a,
+  button,
+  [role="button"],
+  .cursor-pointer,
+  label.cursor-pointer,
+  select,
+  summary {
+    cursor: url('/cursor.svg') 2 2, pointer;
+  }
+
+  /* Form text inputs keep standard text selection cursor */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  input[type="tel"],
+  textarea {
+    cursor: text;
+  }
+
+  /* Disabled elements */
+  button:disabled,
+  [disabled],
+  .cursor-not-allowed {
+    cursor: not-allowed;
   }
 
   ::selection {
@@ -63,6 +95,10 @@
 
 /* ─── Utilities ─────────────────────────────────────────────────────────── */
 @layer utilities {
+  .cursor-pointer {
+    cursor: url('/cursor.svg') 2 2, pointer !important;
+  }
+
   .font-display { font-family: 'Fredoka One', cursive; }
   .font-body { font-family: 'Fredoka', sans-serif; }
 
