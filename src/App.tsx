@@ -1740,23 +1740,16 @@ function ContactSection() {
     },
   ]
 
-  const socials = [
-    { label: 'VGen', href: 'https://vgen.co/Mittsunee', icon: Globe },
-    { label: 'Instagram', href: 'https://www.instagram.com/mittsunee/', icon: Heart },
-    { label: 'Facebook', href: 'https://www.facebook.com/gazzela.chi', icon: FacebookIcon },
-    { label: 'Email', href: 'mailto:mittsune112@gmail.com', icon: Mail },
-  ]
-
   return (
-    <section id="contact" className="py-6 sm:py-10 px-3 sm:px-6">
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="py-4 sm:py-8 px-3 sm:px-6 flex-1 flex flex-col justify-center my-auto">
+      <div className="max-w-4xl mx-auto w-full my-auto">
         {/* Header */}
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="text-center mb-8 sm:mb-12"
+          className="text-center mb-6 sm:mb-8"
         >
           <motion.p variants={fadeUp} className="text-sky-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">✦ Get In Touch</motion.p>
           <motion.h2 variants={fadeUp} className="section-title text-2xl sm:text-3xl">Contact & Order</motion.h2>
@@ -1771,7 +1764,7 @@ function ContactSection() {
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-8 sm:mb-12"
+          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-4 sm:mb-6"
         >
           {contacts.map(c => (
             <motion.a
@@ -1810,37 +1803,8 @@ function ContactSection() {
           ))}
         </motion.div>
 
-        {/* Divider */}
-        <div className="divider mb-6 sm:mb-10" />
-
-        {/* Social links row */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={stagger}
-          className="flex justify-center gap-3 sm:gap-4"
-        >
-          {socials.map(s => (
-            <motion.a
-              key={s.label}
-              href={s.href}
-              target={s.href.startsWith('http') ? '_blank' : undefined}
-              rel="noreferrer"
-              title={s.label}
-              variants={fadeUp}
-              whileHover={{ scale: 1.15, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors shadow-2xs cursor-pointer"
-            >
-              <s.icon size={16} className="sm:hidden" />
-              <s.icon size={18} className="hidden sm:block" />
-            </motion.a>
-          ))}
-        </motion.div>
-
         {/* Credit note */}
-        <div className="text-center mt-6 sm:mt-10 text-sky-300 text-xs">
+        <div className="text-center text-sky-300 text-xs mt-2 sm:mt-4">
           <p>Please credit <strong>@Mittsunee</strong> when sharing commissioned works.</p>
         </div>
       </div>
@@ -1951,7 +1915,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="overflow-y-auto flex-1 custom-scrollbar">
+        <div className="overflow-y-auto flex-1 custom-scrollbar flex flex-col">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePage}
@@ -1959,6 +1923,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
+              className={`w-full ${activePage === 'contact' ? 'flex-1 flex flex-col justify-center my-auto' : ''}`}
             >
               {activePage === 'portfolio' && <PortfolioSection />}
               {activePage === 'pricing' && <PricingSection onNavigateContact={() => onNavigate('contact')} />}
