@@ -487,6 +487,33 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
     { icon: Mail, label: 'Email', href: 'mailto:mittsunee@email.com', color: '#74A2DD' },
   ]
 
+  const navItems = [
+    {
+      id: 'portfolio' as const,
+      title: 'Portfolio',
+      desc: 'Art Gallery',
+      icon: Palette,
+    },
+    {
+      id: 'pricing' as const,
+      title: 'Commission',
+      desc: 'Price Tiers',
+      icon: Coins,
+    },
+    {
+      id: 'tos' as const,
+      title: 'Terms',
+      desc: 'Guidelines',
+      icon: FileText,
+    },
+    {
+      id: 'contact' as const,
+      title: 'Contact',
+      desc: 'Order & Links',
+      icon: MessageCircle,
+    },
+  ]
+
   const containerVariants: Variants = {
     hidden: {},
     show: {
@@ -504,68 +531,125 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
       <div className="absolute top-12 left-1/4 w-72 h-72 md:w-96 md:h-96 rounded-full bg-sky-200/20 blur-3xl pointer-events-none" />
       <div className="absolute bottom-12 right-1/4 w-60 h-60 md:w-80 md:h-80 rounded-full bg-sky-300/15 blur-3xl pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto w-full grid md:grid-cols-2 gap-3 sm:gap-6 lg:gap-12 items-center my-auto">
+      {/* ─── MOBILE VIEW (< md): Layout matching user mockup ─── */}
+      <div className="md:hidden flex flex-col items-center text-center gap-1.5 sm:gap-2 w-full max-w-sm mx-auto my-auto select-none">
+        {/* 1. Mascot Character with soft circular backdrop */}
+        <div className="relative flex items-center justify-center w-24 h-24 my-0.5">
+          <div className="w-20 h-20 rounded-full bg-sky-100/50 border border-dashed border-sky-200/70 absolute inset-0 m-auto pointer-events-none" />
+          <motion.img
+            src="/Original%20Character.png"
+            alt="Mittsunee Mascot"
+            className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none"
+            animate={{ y: [0, -3, 0] }}
+            transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+          />
+        </div>
+
+        {/* 2. Status Badges */}
+        <div className="flex items-center justify-center gap-1.5">
+          <span className="tag text-[9px] py-0.5 px-2.5 font-medium">
+            <Sparkles size={10} />
+            Illustrator
+          </span>
+          <button
+            type="button"
+            onClick={() => onNavigate('pricing')}
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${
+              COMMISSION_STATUS === 'open'
+                ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
+                : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
+            }`}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+              COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
+            }`} />
+            {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
+          </button>
+        </div>
+
+        {/* 3. Mittsunee Logo */}
+        <div className="flex justify-center">
+          <img
+            src="/Type%20Logo.png"
+            alt="Mittsunee"
+            className="h-7 w-auto object-contain select-none"
+          />
+        </div>
+
+        {/* 4. Tagline */}
+        <p className="text-sky-500/80 text-[10px] font-medium tracking-wide">
+          Character Art · Chibi · Live2D ✨
+        </p>
+
+        {/* 5. Quick Navigation Title */}
+        <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-sky-400 pt-0.5">
+          <Sparkles size={9} />
+          <span>QUICK NAVIGATION</span>
+        </div>
+
+        {/* 6. 2x2 Grid Quick Navigation Cards */}
+        <div className="grid grid-cols-2 gap-2 w-full max-w-[270px] mx-auto">
+          {navItems.map(item => (
+            <motion.button
+              key={item.id}
+              type="button"
+              onClick={() => onNavigate(item.id)}
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex flex-col items-center justify-center py-2 px-3 rounded-2xl bg-white/95 hover:bg-sky-50 border border-sky-100/90 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer group"
+            >
+              <div className="w-7 h-7 rounded-full bg-sky-50 group-hover:bg-sky-100 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-1 transition-colors">
+                <item.icon size={15} />
+              </div>
+              <span className="text-xs font-bold text-sky-700 group-hover:text-sky-800 leading-tight">
+                {item.title}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+
+        {/* 7. Action Row: CTA Button + 4 Social Circles */}
+        <div className="flex items-center justify-center gap-2 pt-0.5">
+          <a
+            href="https://vgen.co"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-primary !py-1.5 !px-3 text-xs flex items-center gap-1 shadow-2xs"
+          >
+            <ShoppingCart size={12} />
+            <span>Order via VGen</span>
+          </a>
+
+          <div className="flex items-center gap-1">
+            {socials.map(s => (
+              <motion.a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                title={s.label}
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-7 h-7 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 shadow-2xs transition-colors"
+              >
+                <s.icon size={13} />
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── DESKTOP VIEW (>= md): Full 2-Column Side-by-Side ─── */}
+      <div className="hidden md:grid max-w-5xl mx-auto w-full grid-cols-2 gap-6 lg:gap-12 items-center my-auto">
         {/* Left: text content & in-hero navigation */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="flex flex-col items-center md:items-start text-center md:text-left gap-2 sm:gap-3 md:gap-4 w-full"
+          className="flex flex-col items-start text-left gap-3 md:gap-4 w-full"
         >
-          {/* ─── MOBILE ONLY COMPACT HERO HEADER (< md) ─── */}
-          <div className="md:hidden flex items-center justify-between gap-2.5 w-full max-w-sm px-1">
-            <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
-              {/* Status Badges */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="tag text-[9px] py-0.5 px-2">
-                  <Sparkles size={9} />
-                  Illustrator
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('pricing')}
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${
-                    COMMISSION_STATUS === 'open'
-                      ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
-                      : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                    COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
-                  }`} />
-                  {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
-                </button>
-              </div>
-
-              {/* Mittsunee Logo */}
-              <img
-                src="/Type%20Logo.png"
-                alt="Mittsunee"
-                className="h-7 w-auto object-contain select-none mt-0.5"
-              />
-
-              {/* Tagline / Bio */}
-              <p className="text-sky-500/80 text-[10px] leading-tight text-left">
-                Character Art · Chibi · Live2D ✨
-              </p>
-            </div>
-
-            {/* Mascot Character on Right */}
-            <div className="relative shrink-0 flex items-center justify-center w-20 h-22">
-              <div className="w-16 h-16 rounded-full bg-sky-100/60 border border-dashed border-sky-200/80 absolute inset-0 m-auto pointer-events-none" />
-              <motion.img
-                src="/Original%20Character.png"
-                alt="Mittsunee"
-                className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none"
-                animate={{ y: [0, -3, 0] }}
-                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-              />
-            </div>
-          </div>
-
-          {/* ─── DESKTOP ONLY HEADER (>= md) ─── */}
           {/* Status Badges */}
-          <motion.div variants={itemVariants} className="hidden md:flex flex-wrap items-center justify-start gap-2">
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-start gap-2">
             <span className="tag text-xs py-0.5 px-2.5">
               <Sparkles size={11} />
               Artist / Illustrator
@@ -587,7 +671,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.div>
 
           {/* Mittsunee Logo */}
-          <motion.div variants={itemVariants} className="hidden md:flex justify-start">
+          <motion.div variants={itemVariants} className="flex justify-start">
             <img
               src="/Type%20Logo.png"
               alt="Mittsunee"
@@ -596,7 +680,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.div>
 
           {/* Bio text */}
-          <motion.p variants={itemVariants} className="hidden md:block text-sky-500/80 text-sm md:text-base leading-relaxed max-w-md">
+          <motion.p variants={itemVariants} className="text-sky-500/80 text-sm md:text-base leading-relaxed max-w-md">
             Hello! I'm Mittsunee, an illustrator specializing in{' '}
             <span className="text-sky-400 font-semibold">character art</span>,{' '}
             <span className="text-sky-400 font-semibold">chibi</span>, and{' '}
@@ -605,57 +689,31 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.p>
 
           {/* In-Hero Navigation Buttons */}
-          <motion.div variants={itemVariants} className="w-full max-w-sm md:max-w-lg space-y-1 sm:space-y-2 pt-0.5">
-            <div className="flex items-center gap-2 justify-center md:justify-start">
-              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
+          <motion.div variants={itemVariants} className="w-full max-w-lg space-y-2 pt-0.5">
+            <div className="flex items-center gap-2 justify-start">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
                 <Sparkles size={10} /> Quick Navigation
               </span>
-              <div className="h-px bg-sky-200/50 flex-1 hidden md:block" />
+              <div className="h-px bg-sky-200/50 flex-1" />
             </div>
 
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-              {[
-                {
-                  id: 'portfolio' as const,
-                  title: 'Portfolio',
-                  desc: 'Art Gallery',
-                  icon: Palette,
-                },
-                {
-                  id: 'pricing' as const,
-                  title: 'Commission',
-                  desc: 'Price Tiers',
-                  icon: Coins,
-                },
-                {
-                  id: 'tos' as const,
-                  title: 'Terms',
-                  desc: 'Guidelines',
-                  icon: FileText,
-                },
-                {
-                  id: 'contact' as const,
-                  title: 'Contact',
-                  desc: 'Order & Links',
-                  icon: MessageCircle,
-                },
-              ].map(item => (
+            <div className="grid grid-cols-4 gap-2">
+              {navItems.map(item => (
                 <motion.button
                   key={item.id}
                   type="button"
                   onClick={() => onNavigate(item.id)}
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="group flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-xl sm:rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer"
+                  className="group flex flex-col items-center justify-center p-2.5 rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer"
                 >
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-0.5 sm:mb-1 transition-colors group-hover:scale-105">
-                    <item.icon size={13} className="sm:hidden" />
-                    <item.icon size={16} className="hidden sm:block" />
+                  <div className="w-8 h-8 rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-1 transition-colors group-hover:scale-105">
+                    <item.icon size={16} />
                   </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-sky-600 group-hover:text-sky-700 leading-tight">
+                  <span className="text-xs font-bold text-sky-600 group-hover:text-sky-700 leading-tight">
                     {item.title}
                   </span>
-                  <span className="hidden sm:block text-[10px] text-sky-400 font-medium">
+                  <span className="text-[10px] text-sky-400 font-medium">
                     {item.desc}
                   </span>
                 </motion.button>
@@ -664,13 +722,13 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.div>
 
           {/* Action Row: Primary VGen Order + Social Links */}
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 pt-0.5">
-            <a href="https://vgen.co" target="_blank" rel="noreferrer" className="btn-primary !py-1.5 !px-3 sm:!py-2 sm:!px-4 text-xs sm:text-sm">
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-start gap-3 pt-0.5">
+            <a href="https://vgen.co" target="_blank" rel="noreferrer" className="btn-primary !py-2 !px-4 text-sm">
               <ShoppingCart size={13} />
               Order via VGen
             </a>
 
-            <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="flex items-center gap-1.5">
               {socials.map(s => (
                 <motion.a
                   key={s.label}
@@ -680,10 +738,9 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                   title={s.label}
                   whileHover={{ scale: 1.15, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors shadow-2xs"
+                  className="w-8 h-8 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 transition-colors shadow-2xs"
                 >
-                  <s.icon size={13} className="sm:hidden" />
-                  <s.icon size={15} className="hidden sm:block" />
+                  <s.icon size={15} />
                 </motion.a>
               ))}
             </div>
@@ -695,7 +752,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           initial={{ opacity: 0, x: 40, scale: 0.95 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="hidden md:flex relative justify-center items-end"
+          className="flex relative justify-center items-end"
         >
           {/* Decorative ring */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -1926,8 +1983,8 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
 function HomeFooter() {
   return (
     <footer className="w-full py-2 px-4 sm:px-6 bg-white/40 backdrop-blur-sm border-t border-sky-100/60 shrink-0 text-center select-none">
-      <div className="max-w-5xl mx-auto flex items-center justify-between text-[10px] sm:text-[11px] text-sky-400">
-        <span>© {new Date().getFullYear()} <strong>Mittsunee</strong> · All rights reserved</span>
+      <div className="max-w-5xl mx-auto flex items-center justify-center sm:justify-between text-[10px] sm:text-[11px] text-sky-400">
+        <span>© {new Date().getFullYear()} <strong className="text-sky-500 font-bold">Mittsunee</strong> · All rights reserved</span>
         <span className="hidden sm:inline text-sky-300">Illustration · Chibi · Live2D</span>
       </div>
     </footer>
