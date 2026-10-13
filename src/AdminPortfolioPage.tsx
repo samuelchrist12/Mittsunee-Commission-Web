@@ -12,7 +12,8 @@ import {
   uploadPortfolioImage,
   insertPortfolioToDB,
   deletePortfolioFromDB,
-  toggleFeaturedInDB
+  toggleFeaturedInDB,
+  getThumbnailUrl
 } from './lib/supabase'
 
 export interface AdminPortfolioItem {
@@ -919,9 +920,11 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                     {/* Thumbnail */}
                     <div className="relative aspect-3/4 overflow-hidden bg-sky-100">
                       <img
-                        src={item.image}
+                        src={getThumbnailUrl(item.image, 480, 80)}
                         alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 will-change-transform"
                       />
                       {/* Top Badges */}
                       <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
@@ -1019,8 +1022,10 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <img
-                              src={item.image}
+                              src={getThumbnailUrl(item.image, 120, 75)}
                               alt={item.title}
+                              loading="lazy"
+                              decoding="async"
                               className="w-10 h-10 rounded-lg object-cover border border-sky-200 shrink-0"
                             />
                             <div>

@@ -9,7 +9,7 @@ import {
   Maximize2, Minimize2
 } from 'lucide-react'
 import AdminPortfolioPage from './AdminPortfolioPage'
-import { isSupabaseConfigured, getPortfoliosFromDB } from './lib/supabase'
+import { isSupabaseConfigured, getPortfoliosFromDB, getThumbnailUrl } from './lib/supabase'
 
 
 
@@ -646,7 +646,7 @@ function PortfolioOverallLoader() {
   )
 }
 
-// ─── Portfolio Card with Image Skeleton Loading ─────────────────────────────
+// ─── Ultra-Lightweight Portfolio Card with Fast CDN Thumbnails ──────────────
 
 function PortfolioCard({
   item,
@@ -657,26 +657,24 @@ function PortfolioCard({
 }) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
+  // Request lightweight ~100KB thumbnail from CDN instead of loading 2160x2160 raw files
+  const [imgSrc, setImgSrc] = useState(() => getThumbnailUrl(item.image, 540, 80))
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
-      className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-xs hover:shadow-md transition-all flex flex-col"
+    <div
       onClick={onClick}
-      whileHover={{ y: -4 }}
+      className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-2xs hover:shadow-md transition-transform duration-200 hover:-translate-y-1.5 will-change-transform flex flex-col"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '280px 380px' }}
     >
       {/* Consistent 3:4 Aspect Ratio Frame */}
       <div className="relative w-full aspect-3/4 overflow-hidden bg-sky-50 flex items-center justify-center">
-        {/* Animated Skeleton Shimmer until image is loaded */}
+        {/* Lightweight Skeleton until image is loaded */}
         {!isLoaded && !hasError && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-r from-sky-100/70 via-white/80 to-sky-100/70 animate-shimmer">
-            <div className="w-10 h-10 rounded-full bg-sky-200/50 flex items-center justify-center text-sky-400 animate-pulse">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 animate-pulse pointer-events-none">
+            <div className="w-10 h-10 rounded-full bg-sky-200/50 flex items-center justify-center text-sky-400">
               <Sparkles size={18} />
             </div>
-            <span className="text-[10px] font-semibold text-sky-400 mt-2 animate-pulse tracking-wide">
+            <span className="text-[10px] font-semibold text-sky-400 mt-2 tracking-wide">
               Loading artwork...
             </span>
           </div>
@@ -689,15 +687,21 @@ function PortfolioCard({
           </div>
         ) : (
           <img
-            src={item.image}
+            src={imgSrc}
             alt={item.title}
             loading="lazy"
+            decoding="async"
             onLoad={() => setIsLoaded(true)}
             onError={() => {
-              setHasError(true)
-              setIsLoaded(true)
+              if (imgSrc !== item.image) {
+                // Fallback to original image if CDN transformation endpoint is unavailable
+                setImgSrc(item.image)
+              } else {
+                setHasError(true)
+                setIsLoaded(true)
+              }
             }}
-            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
+            className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 will-change-transform ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -705,8 +709,8 @@ function PortfolioCard({
 
         {/* Hover overlay with zoom icon */}
         {isLoaded && !hasError && (
-          <div className="absolute inset-0 bg-sky-600/0 group-hover:bg-sky-600/25 transition-all duration-300 flex items-center justify-center">
-            <div className="w-11 h-11 rounded-full bg-white/95 backdrop-blur flex items-center justify-center text-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md">
+          <div className="absolute inset-0 bg-sky-950/0 group-hover:bg-sky-950/20 transition-colors duration-200 flex items-center justify-center pointer-events-none">
+            <div className="w-10 h-10 rounded-full bg-white/95 shadow-md flex items-center justify-center text-sky-600 scale-90 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200">
               <ZoomIn size={18} />
             </div>
           </div>
@@ -730,7 +734,7 @@ function PortfolioCard({
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -815,15 +819,13 @@ function PortfolioSection() {
     }, 120)
   }, [])
 
-  // Infinite Scroll targeting the closest scrollable container
+  // Highly performant Infinite Scroll using native IntersectionObserver (zero layout thrashing)
   useEffect(() => {
     const sentinel = sentinelRef.current
     if (!sentinel) return
 
-    // Find the actual scrollable container (e.g. modal body with overflow-y-auto)
     const scrollContainer = sentinel.closest('.overflow-y-auto') as HTMLElement | null
 
-    // 1. IntersectionObserver with explicit root
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0]?.isIntersecting) {
@@ -831,42 +833,15 @@ function PortfolioSection() {
         }
       },
       {
-        root: scrollContainer,
-        rootMargin: '300px',
+        root: scrollContainer || null,
+        rootMargin: '450px',
         threshold: 0,
       }
     )
     observer.observe(sentinel)
 
-    // 2. Direct scroll listener on the container
-    const handleContainerScroll = () => {
-      if (!scrollContainer) return
-      const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-      if (scrollTop + clientHeight >= scrollHeight - 350) {
-        loadNextBatch()
-      }
-    }
-
-    // 3. Fallback window scroll listener
-    const handleWindowScroll = () => {
-      if (!sentinelRef.current) return
-      const rect = sentinelRef.current.getBoundingClientRect()
-      if (rect.top <= window.innerHeight + 300) {
-        loadNextBatch()
-      }
-    }
-
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleContainerScroll, { passive: true })
-    }
-    window.addEventListener('scroll', handleWindowScroll, { passive: true, capture: true })
-
     return () => {
       observer.disconnect()
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', handleContainerScroll)
-      }
-      window.removeEventListener('scroll', handleWindowScroll, true)
     }
   }, [loadNextBatch, visibleCount, hasMore])
 
@@ -922,20 +897,18 @@ function PortfolioSection() {
               ))}
             </motion.div>
 
-            {/* Step 3: Stable, Non-Jumping Responsive Grid */}
+            {/* Step 3: Fast, Stable, Hardware-Accelerated Responsive Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              <AnimatePresence>
-                {displayedItems.map(item => (
-                  <PortfolioCard
-                    key={item.id}
-                    item={item}
-                    onClick={() => {
-                      const globalIdx = items.findIndex(p => p.id === item.id)
-                      setLightboxIndex(globalIdx)
-                    }}
-                  />
-                ))}
-              </AnimatePresence>
+              {displayedItems.map(item => (
+                <PortfolioCard
+                  key={item.id}
+                  item={item}
+                  onClick={() => {
+                    const globalIdx = items.findIndex(p => p.id === item.id)
+                    setLightboxIndex(globalIdx)
+                  }}
+                />
+              ))}
             </div>
 
             {/* Empty State */}
