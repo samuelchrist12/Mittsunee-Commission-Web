@@ -30,6 +30,8 @@
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+    height: 100%;
   }
 
   section[id] {
@@ -40,7 +42,8 @@
     font-family: 'Fredoka', sans-serif;
     background-color: #FAFCFF;
     color: #3763A3;
-    min-height: 100vh;
+    min-height: 100%;
+    overscroll-behavior: none;
     /* Subtle crosshatch grid matching carrd aesthetic */
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M 28 0 L 0 0 0 28' fill='none' stroke='rgba(116%2C162%2C221%2C0.12)' stroke-width='1'/%3E%3C/svg%3E");
     background-size: 28px 28px;

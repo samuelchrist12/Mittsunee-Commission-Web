@@ -499,7 +499,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
   }
 
   return (
-    <section id="hero" className="relative flex-1 flex items-center justify-center overflow-hidden px-3 sm:px-6 py-1 sm:py-4">
+    <section id="hero" className="relative flex-1 flex flex-col items-center justify-center overflow-hidden px-3 sm:px-6 py-1 sm:py-4">
       {/* Decorative background orbs */}
       <div className="absolute top-12 left-1/4 w-72 h-72 md:w-96 md:h-96 rounded-full bg-sky-200/20 blur-3xl pointer-events-none" />
       <div className="absolute bottom-12 right-1/4 w-60 h-60 md:w-80 md:h-80 rounded-full bg-sky-300/15 blur-3xl pointer-events-none" />
@@ -512,22 +512,74 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           animate="show"
           className="flex flex-col items-center md:items-start text-center md:text-left gap-2 sm:gap-3 md:gap-4 w-full"
         >
+          {/* ─── MOBILE ONLY COMPACT HERO HEADER (< md) ─── */}
+          <div className="md:hidden flex items-center justify-between gap-2.5 w-full max-w-sm px-1">
+            <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
+              {/* Status Badges */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="tag text-[9px] py-0.5 px-2">
+                  <Sparkles size={9} />
+                  Illustrator
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('pricing')}
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${
+                    COMMISSION_STATUS === 'open'
+                      ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
+                      : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                    COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
+                  }`} />
+                  {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
+                </button>
+              </div>
+
+              {/* Mittsunee Logo */}
+              <img
+                src="/Type%20Logo.png"
+                alt="Mittsunee"
+                className="h-7 w-auto object-contain select-none mt-0.5"
+              />
+
+              {/* Tagline / Bio */}
+              <p className="text-sky-500/80 text-[10px] leading-tight text-left">
+                Character Art · Chibi · Live2D ✨
+              </p>
+            </div>
+
+            {/* Mascot Character on Right */}
+            <div className="relative shrink-0 flex items-center justify-center w-20 h-22">
+              <div className="w-16 h-16 rounded-full bg-sky-100/60 border border-dashed border-sky-200/80 absolute inset-0 m-auto pointer-events-none" />
+              <motion.img
+                src="/Original%20Character.png"
+                alt="Mittsunee"
+                className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none"
+                animate={{ y: [0, -3, 0] }}
+                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+              />
+            </div>
+          </div>
+
+          {/* ─── DESKTOP ONLY HEADER (>= md) ─── */}
           {/* Status Badges */}
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 sm:gap-2">
-            <span className="tag text-[10px] sm:text-xs py-0.5 px-2.5">
+          <motion.div variants={itemVariants} className="hidden md:flex flex-wrap items-center justify-start gap-2">
+            <span className="tag text-xs py-0.5 px-2.5">
               <Sparkles size={11} />
               Artist / Illustrator
             </span>
             <button
               type="button"
               onClick={() => onNavigate('pricing')}
-              className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
                 COMMISSION_STATUS === 'open'
                   ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
                   : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
               }`}
             >
-              <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse ${
+              <span className={`w-2 h-2 rounded-full animate-pulse ${
                 COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
               }`} />
               {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
@@ -535,46 +587,16 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </motion.div>
 
           {/* Mittsunee Logo */}
-          <motion.div variants={itemVariants} className="flex justify-center md:justify-start">
+          <motion.div variants={itemVariants} className="hidden md:flex justify-start">
             <img
               src="/Type%20Logo.png"
               alt="Mittsunee"
-              className="h-8 sm:h-11 md:h-16 w-auto object-contain select-none"
+              className="h-12 lg:h-16 w-auto object-contain select-none"
             />
           </motion.div>
 
-          {/* Mobile Character Art (shown only on mobile < md to keep viewport compact and balanced) */}
-          <div className="md:hidden relative flex justify-center items-center my-0.5">
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-28 h-28 rounded-full border border-dashed border-sky-200/50" />
-              <div className="w-20 h-20 rounded-full bg-sky-100/40 absolute" />
-            </div>
-            <motion.img
-              src="/Original%20Character.png"
-              alt="Mittsunee Original Character"
-              className="relative z-10 w-full max-w-[130px] max-h-[19vh] object-contain drop-shadow-md select-none"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
-            />
-            {/* Floating chips on mobile */}
-            <button
-              type="button"
-              onClick={() => onNavigate('pricing')}
-              className="absolute top-1 -left-2 card px-2 py-0.5 text-[9px] font-semibold text-sky-500 shadow-2xs flex items-center gap-1 cursor-pointer"
-            >
-              <Star size={9} fill="currentColor" /> Chibi
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('portfolio')}
-              className="absolute bottom-1 -right-2 card px-2 py-0.5 text-[9px] font-semibold text-sky-500 shadow-2xs flex items-center gap-1 cursor-pointer"
-            >
-              Live2D
-            </button>
-          </div>
-
           {/* Bio text */}
-          <motion.p variants={itemVariants} className="text-sky-500/80 text-[11px] sm:text-xs md:text-base leading-snug sm:leading-relaxed max-w-xs md:max-w-md">
+          <motion.p variants={itemVariants} className="hidden md:block text-sky-500/80 text-sm md:text-base leading-relaxed max-w-md">
             Hello! I'm Mittsunee, an illustrator specializing in{' '}
             <span className="text-sky-400 font-semibold">character art</span>,{' '}
             <span className="text-sky-400 font-semibold">chibi</span>, and{' '}
@@ -627,7 +649,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                   className="group flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-xl sm:rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer"
                 >
                   <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-0.5 sm:mb-1 transition-colors group-hover:scale-105">
-                    <item.icon size={14} className="sm:hidden" />
+                    <item.icon size={13} className="sm:hidden" />
                     <item.icon size={16} className="hidden sm:block" />
                   </div>
                   <span className="text-[10px] sm:text-xs font-bold text-sky-600 group-hover:text-sky-700 leading-tight">
@@ -1737,7 +1759,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-5 md:p-8 bg-sky-950/45 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center px-2 py-7 sm:px-5 sm:py-6 md:p-8 bg-sky-950/45 backdrop-blur-md"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.88, y: 35 }}
@@ -1748,7 +1770,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         className={`relative w-full bg-white/95 backdrop-blur-xl shadow-2xl border border-sky-100 flex flex-col overflow-hidden transition-all duration-300 ${
           isExpanded
             ? 'max-w-[98vw] h-[97vh] rounded-2xl'
-            : 'max-w-5xl max-h-[96vh] h-[93vh] sm:max-h-[92vh] sm:h-[88vh] rounded-2xl sm:rounded-3xl'
+            : 'max-w-5xl max-h-[82dvh] h-[80dvh] sm:max-h-[90dvh] sm:h-[86dvh] rounded-2xl sm:rounded-3xl'
         }`}
       >
         {/* Card Header / Window Controls */}
@@ -1861,8 +1883,8 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
 
 function HomeFooter() {
   return (
-    <footer className="w-full py-2.5 px-6 bg-white/40 backdrop-blur-sm border-t border-sky-100/60 shrink-0 text-center select-none">
-      <div className="max-w-5xl mx-auto flex items-center justify-between text-[11px] text-sky-400">
+    <footer className="w-full py-2 px-4 sm:px-6 bg-white/40 backdrop-blur-sm border-t border-sky-100/60 shrink-0 text-center select-none">
+      <div className="max-w-5xl mx-auto flex items-center justify-between text-[10px] sm:text-[11px] text-sky-400">
         <span>© {new Date().getFullYear()} <strong>Mittsunee</strong> · All rights reserved</span>
         <span className="hidden sm:inline text-sky-300">Illustration · Chibi · Live2D</span>
       </div>
@@ -1912,17 +1934,20 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // Lock body scroll when card modal is open
+  // Lock body & html scroll on public site so mobile viewport never bounces or scrolls
   useEffect(() => {
-    if (activePage && !isAdmin) {
+    if (!isAdmin) {
       document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
     return () => {
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
-  }, [activePage, isAdmin])
+  }, [isAdmin])
 
   // If secret route /cyela is active, show the Admin Portfolio Page
   if (isAdmin) {
@@ -1931,7 +1956,7 @@ export default function App() {
 
   return (
     <CurrencyCtx.Provider value={{ currency, toggle }}>
-      <div className="h-screen h-[100dvh] overflow-hidden flex flex-col justify-between">
+      <div className="fixed inset-0 w-full h-full overflow-hidden flex flex-col justify-between select-none">
         <HeroSection onNavigate={setActivePage} />
 
         <HomeFooter />
