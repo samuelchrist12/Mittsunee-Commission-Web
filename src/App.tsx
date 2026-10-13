@@ -27,6 +27,212 @@ interface PortfolioItem {
   image: string
 }
 
+export const INITIAL_PORTFOLIO_ITEMS: PortfolioItem[] = [
+  {
+    id: 40,
+    category: 'illustration',
+    title: 'Kalopsia',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/29_Kalopsia.webp',
+  },
+  {
+    id: 39,
+    category: 'illustration',
+    title: 'Mayse',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/28_Mayse.webp',
+  },
+  {
+    id: 38,
+    category: 'illustration',
+    title: 'Njess',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/27_njess.webp',
+  },
+  {
+    id: 36,
+    category: 'illustration',
+    title: 'Fania',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/26_Fania.webp',
+  },
+  {
+    id: 35,
+    category: 'illustration',
+    title: 'Aoki Ryuzen',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/25_aoki_ryuzen.webp',
+  },
+  {
+    id: 34,
+    category: 'illustration',
+    title: 'Futsuri',
+    subtitle: 'Original Character',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/24_Futsuri.webp',
+  },
+  {
+    id: 33,
+    category: 'illustration',
+    title: 'Fuyo Mafuyu',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/23_Fuyo_Mafuyu.webp',
+  },
+  {
+    id: 32,
+    category: 'illustration',
+    title: 'Yuki Setsuna',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/22_Yuki_setsuna.webp',
+  },
+  {
+    id: 31,
+    category: 'illustration',
+    title: 'Hatsune Miku',
+    subtitle: 'Fanart Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/21_Miku.webp',
+  },
+  {
+    id: 30,
+    category: 'illustration',
+    title: 'Original Character Portrait',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/20_OC.webp',
+  },
+  {
+    id: 29,
+    category: 'illustration',
+    title: 'Furina',
+    subtitle: 'Fanart Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/19_Fanart_furina.webp',
+  },
+  {
+    id: 28,
+    category: 'illustration',
+    title: 'Artwork #18',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/18.webp',
+  },
+  {
+    id: 27,
+    category: 'illustration',
+    title: 'Njess',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/17_Njess.webp',
+  },
+  {
+    id: 26,
+    category: 'illustration',
+    title: 'Oxy',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/16_Oxy_.webp',
+  },
+  {
+    id: 25,
+    category: 'illustration',
+    title: 'Forever Young',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/15_Forever_young.webp',
+  },
+  {
+    id: 24,
+    category: 'chibi',
+    title: 'Kurumi Tokisaki',
+    subtitle: 'Chibi Character Art',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/14_Chibi_tokisaki.webp',
+  },
+  {
+    id: 23,
+    category: 'illustration',
+    title: 'Amyllis',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/13_Amyllis.webp',
+  },
+  {
+    id: 22,
+    category: 'illustration',
+    title: 'Harumika',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/12_Harumika.webp',
+  },
+  {
+    id: 21,
+    category: 'illustration',
+    title: 'Aoki Ryuzen',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/11_Aoki_Ryuzen.webp',
+  },
+  {
+    id: 20,
+    category: 'illustration',
+    title: 'Aislyn Bloomtear',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/10_Aislyn_bloomtear.webp',
+  },
+  {
+    id: 19,
+    category: 'illustration',
+    title: 'Dakung',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/09_Dakung.webp',
+  },
+  {
+    id: 18,
+    category: 'illustration',
+    title: 'Lucia Seraphina',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/08_Lucia_seraphina.webp',
+  },
+  {
+    id: 17,
+    category: 'illustration',
+    title: 'Runa',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/07_Runa.webp',
+  },
+  {
+    id: 16,
+    category: 'chibi',
+    title: 'Kuma Kumarin',
+    subtitle: 'Chibi Character Art',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/06_Kuma_kumarin.webp',
+  },
+  {
+    id: 15,
+    category: 'illustration',
+    title: 'Fuyu Sierra',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/05_Fuyu_sierra.webp',
+  },
+  {
+    id: 14,
+    category: 'illustration',
+    title: 'Aru',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/04_Aru.webp',
+  },
+  {
+    id: 13,
+    category: 'illustration',
+    title: 'Mitsuyama Haruka',
+    subtitle: 'Full Illustration',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/03_Mitsuyama_haruka.webp',
+  },
+  {
+    id: 12,
+    category: 'illustration',
+    title: 'Futsuri (Black Ver.)',
+    subtitle: 'Original Character',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/02_Futsuri_black.webp',
+  },
+  {
+    id: 11,
+    category: 'illustration',
+    title: 'Futsuri',
+    subtitle: 'Original Character',
+    image: 'https://udilgelagkmivkdiaqyt.supabase.co/storage/v1/object/public/portfolio/artworks/01_Futsuri.webp',
+  },
+]
+
 interface PriceRow {
   shot: string
   usd: number
@@ -659,6 +865,14 @@ function PortfolioCard({
 }) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  // Immediately reveal if image is already cached by the browser
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
+      setIsLoaded(true)
+    }
+  }, [item.image])
 
   return (
     <motion.div
@@ -693,9 +907,9 @@ function PortfolioCard({
           </div>
         ) : (
           <img
+            ref={imgRef}
             src={item.image}
             alt={item.title}
-            loading="lazy"
             decoding="async"
             onLoad={() => setIsLoaded(true)}
             onError={() => {
@@ -740,19 +954,19 @@ function PortfolioCard({
 }
 
 function PortfolioSection() {
-  const [items, setItems] = useState<PortfolioItem[]>([])
-  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [items, setItems] = useState<PortfolioItem[]>(INITIAL_PORTFOLIO_ITEMS)
+  const isInitialLoading = items.length === 0
   const [filter, setFilter] = useState('all')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [visibleCount, setVisibleCount] = useState(6)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
 
+  const sectionRef = useRef<HTMLElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
-  // Fetch from Supabase on mount
+  // Background sync from Supabase to pick up any new admin uploads
   useEffect(() => {
     let isMounted = true
-    setIsInitialLoading(true)
 
     if (isSupabaseConfigured) {
       getPortfoliosFromDB()
@@ -771,16 +985,8 @@ function PortfolioSection() {
           }
         })
         .catch(err => {
-          console.error('Failed to load portfolio from Supabase:', err)
+          console.error('Failed to sync portfolios from Supabase:', err)
         })
-        .finally(() => {
-          // Subtle natural delay to ensure titles & cards reveal smoothly without flickering
-          setTimeout(() => {
-            if (isMounted) setIsInitialLoading(false)
-          }, 350)
-        })
-    } else {
-      setIsInitialLoading(false)
     }
 
     return () => {
@@ -816,65 +1022,70 @@ function PortfolioSection() {
       setVisibleCount(prev => prev + 6)
       setIsLoadingMore(false)
       isLoadingMoreRef.current = false
-    }, 220)
+    }, 180)
   }, [])
 
-  // Auto-trigger infinite scroll on container and window scroll
+  // Auto-trigger infinite scroll on container scroll, IntersectionObserver, and window scroll
   useEffect(() => {
-    const sentinel = sentinelRef.current
-    if (!sentinel) return
+    const sectionEl = sectionRef.current
+    const scrollContainer =
+      (sectionEl?.closest('.overflow-y-auto') as HTMLElement | null) ||
+      (document.querySelector('.overflow-y-auto') as HTMLElement | null)
 
-    const scrollContainer = sentinel.closest('.overflow-y-auto') as HTMLElement | null
-
-    // 1. Primary IntersectionObserver
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0]?.isIntersecting) {
-          loadNextBatch()
-        }
-      },
-      {
-        root: scrollContainer || null,
-        rootMargin: '350px 0px',
-        threshold: 0,
-      }
-    )
-    observer.observe(sentinel)
-
-    // 2. Active container scroll listener
-    const handleScroll = () => {
+    // 1. Direct container scroll listener (triggers within 320px of bottom)
+    const handleContainerScroll = () => {
       if (!scrollContainer) return
       const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-      if (scrollTop + clientHeight >= scrollHeight - 380) {
+      if (scrollTop + clientHeight >= scrollHeight - 320) {
         loadNextBatch()
       }
     }
 
+    // 2. IntersectionObserver on sentinel
+    let observer: IntersectionObserver | null = null
+    const sentinel = sentinelRef.current
+    if (sentinel) {
+      observer = new IntersectionObserver(
+        entries => {
+          if (entries[0]?.isIntersecting) {
+            loadNextBatch()
+          }
+        },
+        {
+          root: scrollContainer || null,
+          rootMargin: '250px 0px',
+          threshold: 0,
+        }
+      )
+      observer.observe(sentinel)
+    }
+
     // 3. Fallback window scroll listener
     const handleWindowScroll = () => {
-      if (!sentinelRef.current) return
-      const rect = sentinelRef.current.getBoundingClientRect()
-      if (rect.top <= window.innerHeight + 380) {
+      const target = sentinelRef.current || sectionRef.current
+      if (!target) return
+      const rect = target.getBoundingClientRect()
+      if (rect.top <= window.innerHeight + 320) {
         loadNextBatch()
       }
     }
 
     if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+      scrollContainer.addEventListener('scroll', handleContainerScroll, { passive: true })
     }
     window.addEventListener('scroll', handleWindowScroll, { passive: true })
 
     return () => {
-      observer.disconnect()
+      if (observer) observer.disconnect()
       if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', handleScroll)
+        scrollContainer.removeEventListener('scroll', handleContainerScroll)
       }
       window.removeEventListener('scroll', handleWindowScroll)
     }
-  }, [loadNextBatch, visibleCount, hasMore])
+  }, [loadNextBatch, visibleCount, hasMore, filter])
 
   return (
-    <section id="portfolio" className="py-6 sm:py-10 px-4 sm:px-6">
+    <section ref={sectionRef} id="portfolio" className="py-6 sm:py-10 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         {/* Step 1: Overall Section Loading Animation */}
         {isInitialLoading ? (
