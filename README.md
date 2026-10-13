@@ -39,45 +39,6 @@ A modern, responsive, and aesthetic web application built with React, Vite, Tail
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/samuelchrist12/Mittsunee-Commission-Web.git
-cd Mittsunee-Commission-Web
-```
-
-### 2. Install dependencies
-```bash
-npm install
-```
-
-### 3. Environment Variables Setup
-Copy `.env.example` to `.env` and fill in your Supabase credentials:
-```bash
-cp .env.example .env
-```
-
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### 4. Database Setup
-Execute the SQL schema in `supabase_schema.sql` inside your Supabase SQL Editor.
-
-### 5. Run Development Server
-```bash
-npm run dev
-```
-
-### 6. Build for Production
-```bash
-npm run build
-```
-
----
-
 ## 📄 License
 All artwork and character illustrations © **Mittsunee**. All rights reserved.
 Web codebase is licensed for personal commission portfolio usage.
