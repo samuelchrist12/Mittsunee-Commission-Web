@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import {
   UploadCloud, Image as ImageIcon, Plus, Trash2, Eye,
   Sparkles, CheckCircle2, ArrowLeft, Search, Star,
-  Palette, RefreshCw, X, FolderHeart, Info, HardDrive,
+  Palette, X, FolderHeart, Info, HardDrive,
   Grid, List as ListIcon, Check, ShieldCheck, Database
 } from 'lucide-react'
 import {
@@ -378,7 +378,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
             >
               <Database size={12} className={isSupabaseConfigured ? 'text-emerald-600' : 'text-amber-600'} />
               <span>{isSupabaseConfigured ? 'Supabase: Connected 🟢' : 'Supabase: Demo Mode 🟡'}</span>
-              {isLoadingDB && <RefreshCw size={11} className="animate-spin text-emerald-600 ml-1" />}
+              {isLoadingDB && <img src="/Loading%20Eye.png" alt="Syncing" className="h-3 w-auto object-contain animate-pulse ml-1.5" />}
             </div>
 
             <button
@@ -720,7 +720,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                   >
                     {isSubmitting ? (
                       <>
-                        <RefreshCw size={15} className="animate-spin" />
+                        <img src="/Loading%20Eye.png" alt="Saving" className="h-4 w-auto object-contain animate-pulse select-none" />
                         <span>Saving Artwork...</span>
                       </>
                     ) : (
@@ -902,7 +902,16 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
             </div>
 
             {/* Artworks Display */}
-            {filteredArtworks.length === 0 ? (
+            {isLoadingDB && artworks.length === 0 ? (
+              <div className="py-20 text-center flex flex-col items-center justify-center gap-2.5 bg-sky-50/40 rounded-2xl border border-dashed border-sky-200">
+                <img
+                  src="/Loading%20Eye.png"
+                  alt="Loading collection"
+                  className="w-36 h-auto object-contain animate-pulse select-none opacity-85"
+                />
+                <p className="text-xs font-semibold text-sky-500">Loading collection from database...</p>
+              </div>
+            ) : filteredArtworks.length === 0 ? (
               <div className="py-16 text-center space-y-3 bg-sky-50/40 rounded-2xl border border-dashed border-sky-200">
                 <ImageIcon size={36} className="text-sky-300 mx-auto" />
                 <p className="text-sm font-bold text-sky-800">No matching artworks found</p>

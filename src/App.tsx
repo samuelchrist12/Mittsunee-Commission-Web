@@ -752,10 +752,17 @@ interface LightboxProps {
 
 function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
   const [current, setCurrent] = useState(initialIndex)
+  const [imgLoaded, setImgLoaded] = useState(false)
   const item = items[current]
 
-  const prev = useCallback(() => setCurrent(i => (i - 1 + items.length) % items.length), [items.length])
-  const next = useCallback(() => setCurrent(i => (i + 1) % items.length), [items.length])
+  const prev = useCallback(() => {
+    setImgLoaded(false)
+    setCurrent(i => (i - 1 + items.length) % items.length)
+  }, [items.length])
+  const next = useCallback(() => {
+    setImgLoaded(false)
+    setCurrent(i => (i + 1) % items.length)
+  }, [items.length])
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -777,7 +784,7 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2.5 sm:p-6"
       style={{ background: 'rgba(12, 28, 56, 0.82)', backdropFilter: 'blur(12px)' }}
       onClick={onClose}
     >
@@ -787,18 +794,33 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.92, opacity: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-4xl max-h-[92vh] w-full flex flex-col border border-sky-100"
+        className="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-4xl max-h-[90vh] w-full flex flex-col border border-sky-100"
         onClick={e => e.stopPropagation()}
       >
         {/* Main Artwork Preview Frame */}
         <div className="relative flex-1 min-h-0 flex items-center justify-center bg-sky-50/60 p-3 sm:p-6 overflow-hidden">
+          {/* Loading Eye indicator while high-res artwork loads */}
+          {!imgLoaded && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none gap-2">
+              <motion.img
+                src="/Loading%20Eye.png"
+                alt="Loading preview"
+                className="w-24 sm:w-32 h-auto object-contain select-none opacity-85 drop-shadow-xs"
+                animate={{ opacity: [0.6, 1, 0.6], scale: [0.98, 1.02, 0.98] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <span className="text-[10px] text-sky-400 font-medium">Opening artwork preview...</span>
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             <motion.img
               key={item.id}
               src={item.image}
               alt={item.title}
+              onLoad={() => setImgLoaded(true)}
               initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: imgLoaded ? 1 : 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.22 }}
               className="max-h-[70vh] sm:max-h-[75vh] w-auto max-w-full object-contain rounded-xl shadow-xs select-none"
@@ -860,37 +882,46 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
 
 function PortfolioOverallLoader() {
   return (
-    <div className="py-20 sm:py-28 flex flex-col items-center justify-center text-center px-4">
-      {/* Animated glowing orb with Mittsunee mascot & sparkles */}
-      <div className="relative mb-6">
-        {/* Outer glowing pulsing halo */}
+    <div className="py-16 sm:py-24 flex flex-col items-center justify-center text-center px-4">
+      {/* Animated glowing container with Mittsunee Loading Eye */}
+      <div className="relative mb-5 flex flex-col items-center">
+        {/* Soft glowing aura behind the eyes */}
         <motion.div
-          animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0.7, 0.35] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -inset-4 rounded-full bg-sky-200/60 blur-md"
+          animate={{ scale: [0.95, 1.15, 0.95], opacity: [0.35, 0.75, 0.35] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -inset-6 rounded-3xl bg-sky-200/50 blur-xl pointer-events-none"
         />
-        {/* Spinning decorative ring */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-          className="absolute -inset-2.5 rounded-full border-2 border-dashed border-sky-300"
-        />
-        {/* Center avatar/mascot */}
-        <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-lg bg-sky-100 flex items-center justify-center">
-          <img
-            src="/Original Character.png"
-            alt="Mittsunee Mascot"
-            className="w-full h-full object-cover"
+
+        {/* Decorative subtle border frame with animated Loading Eyes */}
+        <div className="relative px-6 py-4 rounded-3xl bg-white/90 backdrop-blur-md border border-sky-100 shadow-sm flex items-center justify-center">
+          <motion.img
+            src="/Loading%20Eye.png"
+            alt="Loading artworks"
+            className="w-40 sm:w-52 h-auto object-contain drop-shadow-xs select-none"
+            animate={{
+              scale: [0.97, 1.03, 0.97],
+              opacity: [0.85, 1, 0.85],
+              y: [0, -3, 0],
+            }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
           />
+
+          {/* Floating cute sparkle accents */}
+          <motion.span
+            animate={{ rotate: [0, 20, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-sky-300 text-white flex items-center justify-center text-[10px] font-bold shadow-xs"
+          >
+            ✦
+          </motion.span>
+          <motion.span
+            animate={{ rotate: [0, -20, 0], scale: [1.1, 0.9, 1.1] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+            className="absolute -bottom-1.5 -left-1.5 w-5 h-5 rounded-full bg-amber-200 text-amber-700 flex items-center justify-center text-[9px] font-bold shadow-xs"
+          >
+            ✨
+          </motion.span>
         </div>
-        {/* Floating sparkle badge */}
-        <motion.div
-          animate={{ y: [-3, 3, -3], rotate: [0, 15, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-amber-300 text-white flex items-center justify-center shadow-xs text-xs font-bold"
-        >
-          ✦
-        </motion.div>
       </div>
 
       {/* Loading title & subtitle */}
@@ -907,15 +938,15 @@ function PortfolioOverallLoader() {
         transition={{ delay: 0.15 }}
         className="text-xs text-sky-400 mt-1 max-w-xs"
       >
-        Fetching recent illustrations and models...
+        Opening eyes to recent illustrations and models...
       </motion.p>
 
       {/* Sleek shimmer loading bar */}
-      <div className="w-48 h-1.5 bg-sky-100 rounded-full mt-4 overflow-hidden relative">
+      <div className="w-44 h-1.5 bg-sky-100 rounded-full mt-4 overflow-hidden relative">
         <motion.div
-          animate={{ x: [-120, 200] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-24 h-full bg-gradient-to-r from-transparent via-sky-400 to-transparent rounded-full"
+          animate={{ x: [-100, 180] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-20 h-full bg-gradient-to-r from-transparent via-sky-400 to-transparent rounded-full"
         />
       </div>
     </div>
@@ -958,16 +989,23 @@ function PortfolioCard({
     >
       {/* Proportionate Aspect Ratio Frame */}
       <div className="relative w-full aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-1 sm:p-2">
-        {/* Lightweight Skeleton until image is loaded */}
+        {/* Lightweight Skeleton with Loading Eye until image is loaded */}
         {!isLoaded && !hasError && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 animate-pulse pointer-events-none p-2 text-center">
-            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-sky-200/50 flex items-center justify-center text-sky-400">
-              <Sparkles size={14} className="sm:hidden" />
-              <Sparkles size={18} className="hidden sm:block" />
-            </div>
-            <span className="text-[9px] sm:text-[10px] font-semibold text-sky-400 mt-1.5 tracking-wide">
-              Loading artwork...
-            </span>
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 pointer-events-none p-2 text-center">
+            <motion.div
+              animate={{ opacity: [0.55, 1, 0.55], scale: [0.97, 1.02, 0.97] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              className="flex flex-col items-center justify-center gap-1"
+            >
+              <img
+                src="/Loading%20Eye.png"
+                alt="Loading artwork"
+                className="w-14 sm:w-20 h-auto object-contain select-none drop-shadow-2xs opacity-85"
+              />
+              <span className="text-[8px] sm:text-[9px] font-medium text-sky-400 tracking-wide">
+                Loading...
+              </span>
+            </motion.div>
           </div>
         )}
 
@@ -1238,8 +1276,12 @@ function PortfolioSection() {
                 className="w-full py-4 sm:py-6 flex items-center justify-center text-xs"
               >
                 {isLoadingMore ? (
-                  <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/90 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-sky-100 shadow-xs animate-pulse text-xs">
-                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
+                  <div className="flex items-center gap-2 text-sky-500 font-medium bg-white/95 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-sky-100 shadow-xs text-xs animate-pulse">
+                    <img
+                      src="/Loading%20Eye.png"
+                      alt="Loading more"
+                      className="h-3.5 sm:h-4 w-auto object-contain select-none"
+                    />
                     <span>Loading more artworks...</span>
                   </div>
                 ) : (
