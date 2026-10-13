@@ -719,67 +719,80 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      style={{ background: 'rgba(20, 40, 80, 0.8)', backdropFilter: 'blur(12px)' }}
+      transition={{ duration: 0.22 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6"
+      style={{ background: 'rgba(12, 28, 56, 0.82)', backdropFilter: 'blur(12px)' }}
       onClick={onClose}
     >
-      {/* Image card */}
+      {/* Image card modal */}
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="relative bg-white rounded-2xl overflow-hidden shadow-2xl max-w-lg w-full"
+        exit={{ scale: 0.92, opacity: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        className="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-4xl max-h-[92vh] w-full flex flex-col border border-sky-100"
         onClick={e => e.stopPropagation()}
       >
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={item.id}
-            src={item.image}
-            alt={item.title}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="w-full object-cover max-h-[70vh]"
-          />
-        </AnimatePresence>
+        {/* Main Artwork Preview Frame */}
+        <div className="relative flex-1 min-h-0 flex items-center justify-center bg-sky-50/60 p-3 sm:p-6 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={item.id}
+              src={item.image}
+              alt={item.title}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.22 }}
+              className="max-h-[70vh] sm:max-h-[75vh] w-auto max-w-full object-contain rounded-xl shadow-xs select-none"
+            />
+          </AnimatePresence>
 
-        {/* Info bar */}
-        <div className="px-5 py-4 flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-sky-600 text-sm">{item.title}</p>
-            <p className="text-sky-400 text-xs">{item.subtitle}</p>
-          </div>
-          <span className="tag text-xs capitalize">{item.category}</span>
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={onClose}
+            title="Close Preview (ESC)"
+            className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-rose-500 text-sky-600 hover:text-white backdrop-blur shadow-md flex items-center justify-center transition-all cursor-pointer group"
+          >
+            <X size={16} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+          </button>
+
+          {/* Prev / Next navigation buttons */}
+          <button
+            type="button"
+            onClick={prev}
+            title="Previous Artwork (Left Arrow)"
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            title="Next Artwork (Right Arrow)"
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <ChevronRight size={20} />
+          </button>
         </div>
 
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-sky-400 hover:text-sky-600 hover:bg-white shadow transition-colors"
-        >
-          <X size={16} />
-        </button>
-
-        {/* Prev / Next */}
-        <button
-          onClick={prev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-sky-400 hover:text-sky-600 shadow transition-colors"
-        >
-          <ChevronLeft size={18} />
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-sky-400 hover:text-sky-600 shadow transition-colors"
-        >
-          <ChevronRight size={18} />
-        </button>
-
-        {/* Counter */}
-        <div className="absolute bottom-16 right-4 text-xs text-sky-300">
-          {current + 1} / {items.length}
+        {/* Info bar footer */}
+        <div className="px-5 py-3.5 bg-white border-t border-sky-100 flex items-center justify-between shrink-0">
+          <div className="min-w-0 pr-3">
+            <p className="font-bold text-sky-950 text-sm truncate" title={item.title}>
+              {item.title}
+            </p>
+            <p className="text-sky-400 text-xs truncate mt-0.5">{item.subtitle}</p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-xs text-sky-400 font-medium">
+              {current + 1} / {items.length}
+            </span>
+            <span className="tag text-[11px] capitalize px-2.5 py-0.5 font-semibold">
+              {item.category}
+            </span>
+          </div>
         </div>
       </motion.div>
     </motion.div>
