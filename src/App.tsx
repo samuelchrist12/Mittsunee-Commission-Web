@@ -789,52 +789,87 @@ function PortfolioSection() {
   const displayedItems = filtered.slice(0, visibleCount)
   const hasMore = displayedItems.length < filtered.length
 
+  // Refs to avoid stale closures in listeners
+  const isLoadingMoreRef = useRef(false)
+  const hasMoreRef = useRef(hasMore)
+  hasMoreRef.current = hasMore
+
   // Reset pagination count when filter tab changes
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter)
     setVisibleCount(8)
+    isLoadingMoreRef.current = false
+    setIsLoadingMore(false)
   }
 
-  // Load more items (chunk of 8)
-  const handleLoadMore = useCallback(() => {
-    if (isLoadingMore || !hasMore) return
+  // Load next chunk of 8 items
+  const loadNextBatch = useCallback(() => {
+    if (isLoadingMoreRef.current || !hasMoreRef.current) return
+    isLoadingMoreRef.current = true
     setIsLoadingMore(true)
+
+    // Smooth state update with micro-delay for clean transition
     setTimeout(() => {
       setVisibleCount(prev => prev + 8)
       setIsLoadingMore(false)
-    }, 280)
-  }, [isLoadingMore, hasMore])
+      isLoadingMoreRef.current = false
+    }, 120)
+  }, [])
 
-  // Infinite Scroll with IntersectionObserver + Scroll Listener
+  // Infinite Scroll targeting the closest scrollable container
   useEffect(() => {
     const sentinel = sentinelRef.current
     if (!sentinel) return
 
+    // Find the actual scrollable container (e.g. modal body with overflow-y-auto)
+    const scrollContainer = sentinel.closest('.overflow-y-auto') as HTMLElement | null
+
+    // 1. IntersectionObserver with explicit root
     const observer = new IntersectionObserver(
       entries => {
-        if (entries[0].isIntersecting) {
-          handleLoadMore()
+        if (entries[0]?.isIntersecting) {
+          loadNextBatch()
         }
       },
-      { threshold: 0.1, rootMargin: '200px' }
+      {
+        root: scrollContainer,
+        rootMargin: '300px',
+        threshold: 0,
+      }
     )
-
     observer.observe(sentinel)
 
-    const handleScroll = () => {
-      if (!sentinelRef.current) return
-      const rect = sentinelRef.current.getBoundingClientRect()
-      if (rect.top <= window.innerHeight + 180) {
-        handleLoadMore()
+    // 2. Direct scroll listener on the container
+    const handleContainerScroll = () => {
+      if (!scrollContainer) return
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer
+      if (scrollTop + clientHeight >= scrollHeight - 350) {
+        loadNextBatch()
       }
     }
-    window.addEventListener('scroll', handleScroll, true)
+
+    // 3. Fallback window scroll listener
+    const handleWindowScroll = () => {
+      if (!sentinelRef.current) return
+      const rect = sentinelRef.current.getBoundingClientRect()
+      if (rect.top <= window.innerHeight + 300) {
+        loadNextBatch()
+      }
+    }
+
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleContainerScroll, { passive: true })
+    }
+    window.addEventListener('scroll', handleWindowScroll, { passive: true, capture: true })
 
     return () => {
       observer.disconnect()
-      window.removeEventListener('scroll', handleScroll, true)
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleContainerScroll)
+      }
+      window.removeEventListener('scroll', handleWindowScroll, true)
     }
-  }, [handleLoadMore])
+  }, [loadNextBatch, visibleCount, hasMore])
 
   return (
     <section id="portfolio" className="py-6 sm:py-10 px-4 sm:px-6">
@@ -915,10 +950,23 @@ function PortfolioSection() {
             {hasMore && (
               <div
                 ref={sentinelRef}
-                className="w-full py-8 flex items-center justify-center text-xs text-sky-400 gap-2 font-medium"
+                className="w-full py-8 flex flex-col items-center justify-center gap-3 text-xs"
               >
-                <div className="w-4 h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
-                <span>Memuat karya selanjutnya...</span>
+                {isLoadingMore ? (
+                  <div className="flex items-center gap-2.5 text-sky-500 font-medium bg-sky-50/80 px-4 py-2 rounded-full border border-sky-100 shadow-xs">
+                    <div className="w-4 h-4 rounded-full border-2 border-sky-300 border-t-sky-500 animate-spin" />
+                    <span>Memuat karya selanjutnya...</span>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => loadNextBatch()}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-sky-50 text-sky-600 font-semibold text-xs border border-sky-200/90 shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer group"
+                  >
+                    <span>Muat Lebih Banyak Karya (+8)</span>
+                    <span className="text-sky-400 group-hover:translate-y-0.5 transition-transform font-bold">↓</span>
+                  </button>
+                )}
               </div>
             )}
 
