@@ -1,4 +1,5 @@
 import { useState, createContext, useContext, useCallback, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import type { Variants } from 'motion/react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
@@ -843,16 +844,48 @@ interface LightboxProps {
   onClose: () => void
 }
 
+const LENS_WIDTH = 220
+const LENS_HEIGHT = 140
+const ZOOM_LEVEL = 2.5
+
 function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
   const [current, setCurrent] = useState(initialIndex)
   const [imgLoaded, setImgLoaded] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [showLens, setShowLens] = useState(false)
+  const [lensPos, setLensPos] = useState({
+    x: 0,
+    y: 0,
+    bgX: 0,
+    bgY: 0,
+    bgW: 0,
+    bgH: 0,
+  })
+
   const item = items[current]
+  const imgRef = useRef<HTMLImageElement>(null)
+  const rafRef = useRef<number | null>(null)
+
+  // Ensure desktop-only: requires large viewport (>=1024px), hover capability, and fine pointer
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)')
+    setIsDesktop(mq.matches)
+    const handler = (e: MediaQueryListEvent) => {
+      setIsDesktop(e.matches)
+      if (!e.matches) setShowLens(false)
+    }
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const prev = useCallback(() => {
+    setShowLens(false)
     setImgLoaded(false)
     setCurrent(i => (i - 1 + items.length) % items.length)
   }, [items.length])
+
   const next = useCallback(() => {
+    setShowLens(false)
     setImgLoaded(false)
     setCurrent(i => (i + 1) % items.length)
   }, [items.length])
@@ -868,8 +901,57 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
     return () => {
       document.removeEventListener('keydown', fn)
       document.body.style.overflow = ''
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [onClose, prev, next])
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDesktop || !imgLoaded || !imgRef.current) return
+
+    const rect = imgRef.current.getBoundingClientRect()
+    const clientX = e.clientX
+    const clientY = e.clientY
+
+    // Boundary check: must be directly over rendered artwork
+    if (
+      clientX < rect.left ||
+      clientX > rect.right ||
+      clientY < rect.top ||
+      clientY > rect.bottom
+    ) {
+      if (showLens) setShowLens(false)
+      return
+    }
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+
+    rafRef.current = requestAnimationFrame(() => {
+      const relX = clientX - rect.left
+      const relY = clientY - rect.top
+
+      const bgW = rect.width * ZOOM_LEVEL
+      const bgH = rect.height * ZOOM_LEVEL
+
+      // 1:1 true center calculation
+      const bgX = -(relX * ZOOM_LEVEL) + LENS_WIDTH / 2
+      const bgY = -(relY * ZOOM_LEVEL) + LENS_HEIGHT / 2
+
+      setLensPos({
+        x: clientX,
+        y: clientY,
+        bgX,
+        bgY,
+        bgW,
+        bgH,
+      })
+      setShowLens(true)
+    })
+  }
+
+  const handleMouseLeave = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    setShowLens(false)
+  }
 
   return (
     <motion.div
@@ -887,11 +969,15 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.92, opacity: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-4xl max-h-[90vh] w-full flex flex-col border border-sky-100"
+        className="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-4xl max-h-[85vh] sm:max-h-[88vh] w-full flex flex-col border border-sky-100"
         onClick={e => e.stopPropagation()}
       >
         {/* Main Artwork Preview Frame */}
-        <div className="relative flex-1 min-h-0 flex items-center justify-center bg-sky-50/60 p-3 sm:p-6 overflow-hidden">
+        <div
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          className="relative flex-1 min-h-0 flex items-center justify-center bg-sky-50/60 p-4 sm:p-8 md:p-10 overflow-hidden"
+        >
           {/* Loading Eye indicator while high-res artwork loads */}
           {!imgLoaded && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none gap-2">
@@ -908,6 +994,7 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
 
           <AnimatePresence mode="wait">
             <motion.img
+              ref={imgRef}
               key={item.id}
               src={item.image}
               alt={item.title}
@@ -916,16 +1003,58 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
               animate={{ opacity: imgLoaded ? 1 : 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.22 }}
-              className="max-h-[70vh] sm:max-h-[75vh] w-auto max-w-full object-contain rounded-xl shadow-xs select-none"
+              className={`max-h-[48vh] sm:max-h-[54vh] md:max-h-[58vh] w-auto max-w-full object-contain rounded-xl shadow-xs select-none ${
+                isDesktop && imgLoaded ? 'cursor-none' : ''
+              }`}
             />
           </AnimatePresence>
+
+          {/* Desktop Loupe / Magnifier Lens (rendered to document.body to escape modal transform containing block) */}
+          {isDesktop && showLens && typeof document !== 'undefined' && createPortal(
+            <div
+              style={{
+                position: 'fixed',
+                left: lensPos.x - LENS_WIDTH / 2,
+                top: lensPos.y - LENS_HEIGHT / 2,
+                width: LENS_WIDTH,
+                height: LENS_HEIGHT,
+                backgroundImage: `url(${item.image})`,
+                backgroundPosition: `${lensPos.bgX}px ${lensPos.bgY}px`,
+                backgroundSize: `${lensPos.bgW}px ${lensPos.bgH}px`,
+                backgroundRepeat: 'no-repeat',
+                pointerEvents: 'none',
+                zIndex: 99999,
+              }}
+              className="rounded-2xl border-2 border-sky-400 bg-slate-900 ring-2 ring-white/80 shadow-[0_12px_36px_rgba(14,165,233,0.35)] overflow-hidden transition-opacity duration-150 animate-in fade-in zoom-in-95"
+            >
+              {/* Glass subtle gradient highlight */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-sky-400/10 via-transparent to-white/20 pointer-events-none" />
+
+              {/* Center crosshair reticle */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="relative flex items-center justify-center">
+                  <div className="w-5 h-[1.5px] bg-sky-400/85 shadow-xs" />
+                  <div className="h-5 w-[1.5px] bg-sky-400/85 shadow-xs absolute" />
+                  <div className="w-2.5 h-2.5 rounded-full border border-sky-400/90 absolute bg-white/30 backdrop-blur-2xs" />
+                </div>
+              </div>
+
+              {/* Zoom scale badge */}
+              <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-sky-950/75 border border-sky-400/50 text-[9px] font-bold text-sky-200 tracking-wider backdrop-blur-xs select-none">
+                <ZoomIn size={10} className="text-sky-300" />
+                <span>2.5×</span>
+              </div>
+            </div>,
+            document.body
+          )}
 
           {/* Close button */}
           <button
             type="button"
             onClick={onClose}
+            onMouseEnter={() => setShowLens(false)}
             title="Close Preview (ESC)"
-            className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-rose-500 text-sky-600 hover:text-white backdrop-blur shadow-md flex items-center justify-center transition-all cursor-pointer group"
+            className="absolute top-3.5 right-3.5 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-rose-500 text-sky-600 hover:text-white backdrop-blur shadow-md flex items-center justify-center transition-all cursor-pointer group"
           >
             <X size={16} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
           </button>
@@ -934,16 +1063,18 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
           <button
             type="button"
             onClick={prev}
+            onMouseEnter={() => setShowLens(false)}
             title="Previous Artwork (Left Arrow)"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             type="button"
             onClick={next}
+            onMouseEnter={() => setShowLens(false)}
             title="Next Artwork (Right Arrow)"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
             <ChevronRight size={20} />
           </button>
@@ -957,7 +1088,14 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
             </p>
             <p className="text-sky-400 text-xs truncate mt-0.5">{item.subtitle}</p>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            {/* Desktop zoom hint */}
+            {isDesktop && (
+              <span className="hidden lg:inline-flex items-center gap-1 text-[11px] text-sky-400/90 font-medium bg-sky-50 px-2 py-0.5 rounded-full border border-sky-100">
+                <ZoomIn size={11} className="text-sky-400" />
+                <span>Hover to zoom</span>
+              </span>
+            )}
             <span className="text-xs text-sky-400 font-medium">
               {current + 1} / {items.length}
             </span>

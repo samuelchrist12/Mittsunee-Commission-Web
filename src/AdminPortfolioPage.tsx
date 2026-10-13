@@ -1147,11 +1147,11 @@ export default function AdminPortfolioPage({ onExit, onLogout }: AdminPortfolioP
                 </button>
               </div>
 
-              <div className="rounded-2xl overflow-hidden bg-sky-50 max-h-[60vh] flex items-center justify-center">
+              <div className="rounded-2xl overflow-hidden bg-sky-50 p-4 sm:p-5 flex items-center justify-center">
                 <img
                   src={previewItem.image}
                   alt={previewItem.title}
-                  className="w-full h-auto max-h-[60vh] object-contain"
+                  className="w-full h-auto max-h-[50vh] object-contain rounded-xl"
                 />
               </div>
 
