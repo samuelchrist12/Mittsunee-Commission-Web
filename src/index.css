@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette — soft pastel blue matching carrd */
+  --color-sky-50: #EEF4FB;
+  --color-sky-100: #D6E7F5;
+  --color-sky-200: #9FC5E8;
+  --color-sky-300: #74A2DD;
+  --color-sky-400: #5589CC;
+  --color-sky-500: #3763A3;
+  --color-sky-600: #2A4E87;
+  --color-sky-700: #1E3A6A;
+
+  --color-bg: #FAFCFF;
+  --color-card: #FFFFFF;
+  --color-border: rgba(116, 162, 221, 0.25);
+
+  --font-body: 'Fredoka', sans-serif;
+  --font-display: 'Fredoka One', cursive;
+
+  --radius-card: 16px;
+  --shadow-card: 0 4px 20px rgba(55, 99, 163, 0.08);
+  --shadow-hover: 0 8px 32px rgba(55, 99, 163, 0.15);
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  section[id] {
+    scroll-margin-top: 2rem;
+  }
+
+  body {
+    font-family: 'Fredoka', sans-serif;
+    background-color: #FAFCFF;
+    color: #3763A3;
+    min-height: 100vh;
+    /* Subtle crosshatch grid matching carrd aesthetic */
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M 28 0 L 0 0 0 28' fill='none' stroke='rgba(116%2C162%2C221%2C0.12)' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 28px 28px;
+  }
+
+  ::selection {
+    background-color: #74A2DD;
+    color: white;
+  }
+
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #EEF4FB; }
+  ::-webkit-scrollbar-thumb { background: #9FC5E8; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #74A2DD; }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────────────── */
+@layer utilities {
+  .font-display { font-family: 'Fredoka One', cursive; }
+  .font-body { font-family: 'Fredoka', sans-serif; }
+
+  .card {
+    background: #FFFFFF;
+    border: 1px solid rgba(116, 162, 221, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(55, 99, 163, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .card:hover {
+    box-shadow: 0 8px 32px rgba(55, 99, 163, 0.12);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(116, 162, 221, 0.2);
+  }
+
+  .btn-primary {
+    background: #74A2DD;
+    color: white;
+    border-radius: 9999px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+  .btn-primary:hover {
+    background: #5589CC;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(116, 162, 221, 0.4);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent;
+    color: #74A2DD;
+    border: 1.5px solid #74A2DD;
+    border-radius: 9999px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+  .btn-outline:hover {
+    background: #74A2DD;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(116, 162, 221, 0.35);
+  }
+
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: #3763A3;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+    color: #74A2DD;
+    text-align: center;
+    font-weight: 400;
+    margin-top: 0.25rem;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(116, 162, 221, 0.12);
+    color: #5589CC;
+    border: 1px solid rgba(116, 162, 221, 0.25);
+    border-radius: 9999px;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .status-open {
+    background: rgba(134, 239, 172, 0.2);
+    color: #166534;
+    border: 1px solid rgba(134, 239, 172, 0.5);
+  }
+  .status-closed {
+    background: rgba(252, 165, 165, 0.2);
+    color: #991b1b;
+    border: 1px solid rgba(252, 165, 165, 0.5);
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(116,162,221,0.3), transparent);
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite linear;
+  }
+}
+
