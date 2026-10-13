@@ -278,21 +278,24 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'illustration',
     name: 'Illustration',
     emoji: '🎨',
-    desc: 'Detailed character illustrations with clean lines and vibrant coloring.',
+    desc: 'High-quality character illustrations with clean lines, expressive poses, and soft vibrant coloring.',
     types: [
       {
         name: 'Character Illustration',
         prices: [
-          { shot: 'Bust Up', usd: 35, idr: 120_000 },
-          { shot: 'Half Body', usd: 65, idr: 180_000 },
-          { shot: 'Knee Up', usd: 75, idr: 200_000 },
-          { shot: 'Full Body', usd: 100, idr: 250_000 },
+          { shot: 'Headshot', usd: 35, idr: 100_000 },
+          { shot: 'Bust Up', usd: 60, idr: 150_000 },
+          { shot: 'Half Body', usd: 75, idr: 200_000 },
+          { shot: 'Knee Up', usd: 85, idr: 250_000 },
+          { shot: 'Full Body', usd: 100, idr: 300_000 },
         ],
         addons: [
           { name: 'Additional Character', label: '+100% base price' },
-          { name: 'Simple Background', label: 'Free' },
-          { name: 'Complex Background', label: '+50% base price' },
-          { name: 'Detailed Props / Accessories', label: '+10% to 20%' },
+          { name: 'Background (Simple/White/Transparent)', label: 'FREE' },
+          { name: 'Custom / Complex Background', label: '+$10–$70 (Negotiable)' },
+          { name: 'VTuber Support (PFP/Thumbnail/Banner)', label: 'FREE (Non-merch)' },
+          { name: 'Commercial Use (For Asset/Merchandise)', label: '+100% base price' },
+          { name: 'Rush Fee (2-4 Days)', label: '2x Price' },
         ],
       },
     ],
@@ -301,18 +304,18 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'chibi',
     name: 'Chibi',
     emoji: '🌸',
-    desc: 'Expressive chibi characters, suited for stickers, emotes, and avatars.',
+    desc: 'Cute and expressive chibi characters, perfect for icons, badges, emotes, and stickers.',
     types: [
       {
         name: 'Chibi Style',
         prices: [
-          { shot: 'Head Shot', usd: 15, idr: 70_000 },
-          { shot: 'Full Body', usd: 25, idr: 95_000 },
+          { shot: 'Full Body Chibi', usd: 30, idr: 100_000 },
         ],
         addons: [
           { name: 'Additional Character', label: '+100% base price' },
-          { name: 'Simple Background', label: 'Free' },
-          { name: 'Complex Background', label: '+50% base price' },
+          { name: 'Background (Simple/Transparent)', label: 'FREE' },
+          { name: 'VTuber Support (PFP/Thumbnail/Banner)', label: 'FREE (Non-merch)' },
+          { name: 'Commercial Use (For Asset/Merchandise)', label: '+100% base price' },
         ],
       },
     ],
@@ -321,16 +324,21 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'skeb',
     name: 'SKEB',
     emoji: '✨',
-    desc: 'Surprise commissions where pose, expression, and composition are left to the artist.',
+    desc: 'Surprise commissions in signature style. Pose, vibe, and composition are left to the artist (No design revisions).',
     types: [
       {
-        name: 'Surprise Commission (SKEB)',
-        note: 'Concept and composition are decided by the artist. Design revisions are not included.',
+        name: 'Surprise Commission (SKEB Style)',
+        note: 'Concept and composition decided by artist. Design revisions are not included.',
         prices: [
-          { shot: 'Bust Up', usd: 70, idr: 85_000 },
+          { shot: 'Headshot', usd: 30, idr: 85_000 },
+          { shot: 'Bust Up', usd: 40, idr: 120_000 },
+          { shot: 'Half Body', usd: 50, idr: 160_000 },
+          { shot: 'Full Body', usd: 60, idr: 220_000 },
         ],
         addons: [
-          { name: 'Background', label: 'Artist choice' },
+          { name: 'Background', label: 'FREE (Artist choice)' },
+          { name: 'Additional Character', label: '+100% base price' },
+          { name: 'Rush Fee (2-4 Days)', label: '2x Price' },
         ],
       },
     ],
@@ -339,26 +347,20 @@ const COMMISSION_DATA: CommissionCategory[] = [
     id: 'live2d',
     name: 'Live2D',
     emoji: '🎭',
-    desc: 'Layer-separated and rigged Live2D VTuber models ready for tracking software.',
+    desc: 'Layer-separated PSD model art, cut and ready for riggers. (Art Only — Rigging NOT included).',
     types: [
       {
-        name: 'Full Body Live2D Model',
-        note: 'Tier 1: standard rig | Tier 2: physics and expressions | Tier 3: full model package',
+        name: 'Model Art (Ready to Rig)',
+        note: 'Delivered as organized layered PSD ready for rigging. Rigging service is NOT included.',
         prices: [
-          { shot: 'Tier 1', usd: 300, idr: 1_000_000 },
-          { shot: 'Tier 2', usd: 550, idr: 2_500_000 },
-          { shot: 'Tier 3', usd: 750, idr: 4_500_000 },
+          { shot: 'Half Body Model Art', usd: 180, idr: 850_000 },
+          { shot: 'Full Body Model Art', usd: 300, idr: 1_500_000 },
         ],
         addons: [
-          { name: 'Character Design by Artist', usd: 150, idr: 250_000 },
-          { name: 'Dynamic Action Pose', usd: 200, idr: 700_000 },
-          { name: 'Alternate Outfit', usd: 150, idr: 150_000 },
-          { name: 'Alternate Hairstyle', usd: 150, idr: 150_000 },
-          { name: 'Pet or Prop Item', usd: 150, idr: 150_000 },
-          { name: 'Articulated Fingers', usd: 150, idr: 150_000 },
-          { name: 'Furry Character Feature', usd: 150, idr: 150_000 },
-          { name: 'Hand Pose Toggle', usd: 150, idr: 150_000 },
-          { name: 'Base Body Model', usd: 150, idr: 150_000 },
+          { name: 'Character Design by Artist', usd: 80, idr: 350_000 },
+          { name: 'Additional Outfit', usd: 60, idr: 250_000 },
+          { name: 'Additional Hairstyle', usd: 40, idr: 150_000 },
+          { name: 'Extra Expression / Hand Toggle', usd: 15, idr: 50_000 },
         ],
       },
     ],
@@ -370,15 +372,15 @@ const TOS_DATA: ToSSection[] = [
     id: '01',
     title: 'Commercial Usage',
     table: [
-      { tier: 'Tier 0: Personal', usage: 'Private use, wallpapers, non-monetized avatars', fee: 'Included' },
-      { tier: 'Tier 1: Streaming', usage: 'VTubing and streaming channels under 10k followers', fee: '+10%' },
-      { tier: 'Tier 2: Creator', usage: 'Monetized content, YouTube videos, small merchandise', fee: '+25%' },
-      { tier: 'Tier 3: Commercial', usage: 'Company branding, advertising, large merchandise runs', fee: '+50%' },
+      { tier: 'Tier 0: Personal', usage: 'Private use, wallpapers, personal social avatars', fee: 'Included' },
+      { tier: 'Tier 1: VTuber Support', usage: 'PFP, streaming thumbnail, banner (non-merchandise)', fee: 'FREE ✦' },
+      { tier: 'Tier 2: Commercial Asset', usage: 'Merchandise, company assets, monetized content', fee: '+100%' },
     ],
     items: [
-      'Orders default to Tier 0 (Personal Use).',
+      'Orders default to Tier 0 (Personal Use) / Tier 1 (VTuber Support).',
+      'VTuber Support is FREE for PFP, Thumbnails, and Banners as long as it is not sold as merchandise.',
+      'For Asset / Merchandise / Monetized projects, commercial use is +100% of the base price.',
       'Please state any commercial intentions when sending your inquiry.',
-      'Usage rights can be upgraded at a later date with an adjusted fee.',
     ],
   },
   {
@@ -718,7 +720,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
             Hello! I'm Mittsunee, an illustrator specializing in{' '}
             <span className="text-sky-400 font-semibold">character art</span>,{' '}
             <span className="text-sky-400 font-semibold">chibi</span>, and{' '}
-            <span className="text-sky-400 font-semibold">Live2D models</span>.
+            <span className="text-sky-400 font-semibold">Live2D model art</span>.
             Welcome to my commission portfolio! ✨
           </motion.p>
 
@@ -825,7 +827,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
             whileHover={{ scale: 1.05 }}
             className="absolute bottom-6 -right-2 md:right-4 card px-2.5 py-1.5 text-[11px] font-semibold text-sky-500 cursor-pointer shadow-sm"
           >
-            <span className="flex items-center gap-1.5">🎭 Live2D Rigging</span>
+            <span className="flex items-center gap-1.5">🎭 Live2D Model Art</span>
           </motion.button>
         </motion.div>
       </div>
