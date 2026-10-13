@@ -19,7 +19,7 @@ A modern, responsive, and aesthetic web application built with React, Vite, Tail
   - Infinite scroll pagination for seamless browsing experience.
   - Filter by category (Illustration, Chibi, Skeb, Live2D).
   - Fullscreen Lightbox viewer with zoom & pan preview.
-- **🔐 Secret Admin Panel (`/cyela`)**:
+- **🔐 Secret Admin Panel **:
   - Direct portfolio management (upload new artworks, edit titles/categories, delete artworks).
   - WebP conversion support and Supabase Storage integration.
 - **🎵 BGM Player & Interactive Sound FX**:
