@@ -9,6 +9,7 @@ import {
   Maximize2, Minimize2
 } from 'lucide-react'
 import AdminPortfolioPage from './AdminPortfolioPage'
+import AdminLoginPage, { checkIsAdminAuthenticated, logoutAdmin } from './AdminLoginPage'
 import { isSupabaseConfigured, getPortfoliosFromDB } from './lib/supabase'
 
 
@@ -1976,6 +1977,7 @@ function checkIsAdminRoute(): boolean {
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(checkIsAdminRoute)
+  const [isAdminAuth, setIsAdminAuth] = useState(checkIsAdminAuthenticated)
   const [currency, setCurrency] = useState<Currency>('usd')
   const toggle = useCallback(() => setCurrency(c => c === 'usd' ? 'idr' : 'usd'), [])
   const [activePage, setActivePage] = useState<ActivePage | null>(null)
@@ -1983,7 +1985,11 @@ export default function App() {
   // Listen to browser navigation / URL changes for secret /cyela route
   useEffect(() => {
     const handleLocationChange = () => {
-      setIsAdmin(checkIsAdminRoute())
+      const onAdmin = checkIsAdminRoute()
+      setIsAdmin(onAdmin)
+      if (onAdmin) {
+        setIsAdminAuth(checkIsAdminAuthenticated())
+      }
     }
     window.addEventListener('popstate', handleLocationChange)
     window.addEventListener('hashchange', handleLocationChange)
@@ -1997,6 +2003,12 @@ export default function App() {
   const handleExitAdmin = useCallback(() => {
     window.history.pushState({}, '', '/')
     setIsAdmin(false)
+  }, [])
+
+  // Handle Admin Logout
+  const handleLogoutAdmin = useCallback(() => {
+    logoutAdmin()
+    setIsAdminAuth(false)
   }, [])
 
   // Close on Escape key
@@ -2023,9 +2035,22 @@ export default function App() {
     }
   }, [isAdmin])
 
-  // If secret route /cyela is active, show the Admin Portfolio Page
+  // If secret route /cyela is active, show the Admin Login or Admin Portfolio Page
   if (isAdmin) {
-    return <AdminPortfolioPage onExit={handleExitAdmin} />
+    if (!isAdminAuth) {
+      return (
+        <AdminLoginPage
+          onSuccess={() => setIsAdminAuth(true)}
+          onExit={handleExitAdmin}
+        />
+      )
+    }
+    return (
+      <AdminPortfolioPage
+        onExit={handleExitAdmin}
+        onLogout={handleLogoutAdmin}
+      />
+    )
   }
 
   return (

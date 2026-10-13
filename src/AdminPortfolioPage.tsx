@@ -4,7 +4,7 @@ import {
   UploadCloud, Image as ImageIcon, Plus, Trash2, Eye,
   Sparkles, CheckCircle2, ArrowLeft, Search, Star,
   Palette, X, FolderHeart, Info, HardDrive,
-  Grid, List as ListIcon, Check, ShieldCheck, Database
+  Grid, List as ListIcon, Check, ShieldCheck, Database, LogOut
 } from 'lucide-react'
 import {
   isSupabaseConfigured,
@@ -37,9 +37,10 @@ const SAMPLE_PRESET_IMAGES = [
 
 interface AdminPortfolioPageProps {
   onExit: () => void
+  onLogout?: () => void
 }
 
-export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) {
+export default function AdminPortfolioPage({ onExit, onLogout }: AdminPortfolioPageProps) {
   const [artworks, setArtworks] = useState<AdminPortfolioItem[]>(INITIAL_ARTWORKS)
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -349,9 +350,9 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
                 <span className="font-bold text-base tracking-tight text-sky-950 font-display">
                   Mittsunee Studio
                 </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100 text-sky-700 border border-sky-200/80">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100 text-sky-800 border border-sky-200/80">
                   <ShieldCheck size={12} className="text-sky-600" />
-                  Admin
+                  Tasya (Admin)
                 </span>
               </div>
               <p className="text-xs text-sky-400 flex items-center gap-1.5 font-medium">
@@ -362,7 +363,7 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
           </div>
 
           {/* Right Header Controls */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Supabase Connection Status Badge */}
             <div
               className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold border ${
@@ -384,12 +385,24 @@ export default function AdminPortfolioPage({ onExit }: AdminPortfolioPageProps) 
             <button
               type="button"
               onClick={onExit}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 transition-all active:scale-95 cursor-pointer shadow-2xs group"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 transition-all active:scale-95 cursor-pointer shadow-2xs group"
               title="Return to public portfolio website"
             >
               <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
               <span>Back to Website</span>
             </button>
+
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all active:scale-95 cursor-pointer shadow-2xs"
+                title="Log Out (Tasya)"
+              >
+                <LogOut size={13} />
+                <span className="hidden sm:inline">Log Out</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
