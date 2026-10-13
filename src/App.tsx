@@ -474,6 +474,20 @@ const stagger: Variants = {
 // ─── In-Hero Navigation (Header Navbar removed per request) ───────────────────
 
 
+function XIcon({ size = 18, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+}
+
 function FacebookIcon({ size = 18, className = '' }: { size?: number; className?: string }) {
   return (
     <svg
@@ -501,6 +515,7 @@ interface HeroSectionProps {
 function HeroSection({ onNavigate }: HeroSectionProps) {
   const socials = [
     { icon: Globe, label: 'VGen', href: 'https://vgen.co/Mittsunee', color: '#74A2DD' },
+    { icon: XIcon, label: 'X (Twitter)', href: 'https://x.com/Mittsunee', color: '#0F1419' },
     { icon: Heart, label: 'Instagram', href: 'https://www.instagram.com/mittsunee/', color: '#E1306C' },
     { icon: FacebookIcon, label: 'Facebook', href: 'https://www.facebook.com/gazzela.chi', color: '#1877F2' },
     { icon: Mail, label: 'Email', href: 'mailto:mittsune112@gmail.com', color: '#74A2DD' },
@@ -1719,6 +1734,13 @@ function ContactSection() {
       primary: true,
     },
     {
+      label: 'X (Twitter)',
+      description: 'Follow updates & art',
+      href: 'https://x.com/Mittsunee',
+      icon: XIcon,
+      primary: false,
+    },
+    {
       label: 'Instagram',
       description: 'DM for art & inquiries',
       href: 'https://www.instagram.com/mittsunee/',
@@ -1759,15 +1781,15 @@ function ContactSection() {
           </motion.p>
         </motion.div>
 
-        {/* Contact cards - 2 per row on mobile, 4 per row on desktop */}
+        {/* Contact cards - 2 per row on mobile, 5 on desktop */}
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-4 sm:mb-6"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3.5 mb-4 sm:mb-6"
         >
-          {contacts.map(c => (
+          {contacts.map((c, idx) => (
             <motion.a
               key={c.label}
               href={c.href}
@@ -1775,21 +1797,21 @@ function ContactSection() {
               rel="noreferrer"
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className={`card p-3 sm:p-5 flex flex-col items-center text-center gap-2 sm:gap-3 transition-all duration-200 cursor-pointer rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${
+              className={`card p-3 sm:p-4 flex flex-col items-center text-center gap-2 sm:gap-2.5 transition-all duration-200 cursor-pointer rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${
                 c.primary ? 'border-sky-300/80 shadow-xs' : ''
-              }`}
+              } ${idx === 4 ? 'col-span-2 sm:col-span-1 max-w-[220px] md:max-w-none mx-auto md:mx-0 w-full' : ''}`}
             >
               {c.primary && (
                 <span className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-sky-400 text-white text-[9px] font-bold shadow-2xs">
                   Main
                 </span>
               )}
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 transition-colors shrink-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 transition-colors shrink-0">
                 <c.icon size={20} className="sm:hidden" />
-                <c.icon size={24} className="hidden sm:block" />
+                <c.icon size={22} className="hidden sm:block" />
               </div>
               <div className="w-full">
-                <p className="font-bold text-xs sm:text-base text-sky-700 group-hover:text-sky-800 leading-tight">
+                <p className="font-bold text-xs sm:text-sm text-sky-700 group-hover:text-sky-800 leading-tight">
                   {c.label}
                 </p>
                 <p className="text-[10px] sm:text-xs text-sky-400 mt-0.5 line-clamp-1">
