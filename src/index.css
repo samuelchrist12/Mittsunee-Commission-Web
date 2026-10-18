@@ -32,7 +32,6 @@
     -webkit-font-smoothing: antialiased;
     overscroll-behavior: none;
     height: 100%;
-    cursor: url('/cursor.svg') 2 2, auto;
   }
 
   section[id] {
@@ -48,18 +47,23 @@
     /* Subtle crosshatch grid matching carrd aesthetic */
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M 28 0 L 0 0 0 28' fill='none' stroke='rgba(116%2C162%2C221%2C0.12)' stroke-width='1'/%3E%3C/svg%3E");
     background-size: 28px 28px;
-    cursor: url('/cursor.svg') 2 2, auto;
   }
 
-  /* Interactive elements use custom cursor with pointer fallback */
-  a,
-  button,
-  [role="button"],
-  .cursor-pointer,
-  label.cursor-pointer,
-  select,
-  summary {
-    cursor: url('/cursor.svg') 2 2, pointer;
+  /* Custom cursor enabled ONLY on devices with a mouse/fine pointer */
+  @media (hover: hover) and (pointer: fine) {
+    html, body {
+      cursor: url('/cursor.svg') 2 2, auto;
+    }
+
+    a,
+    button,
+    [role="button"],
+    .cursor-pointer,
+    label.cursor-pointer,
+    select,
+    summary {
+      cursor: url('/cursor.svg') 2 2, pointer;
+    }
   }
 
   /* Form text inputs keep standard text selection cursor */
@@ -95,8 +99,10 @@
 
 /* ─── Utilities ─────────────────────────────────────────────────────────── */
 @layer utilities {
-  .cursor-pointer {
-    cursor: url('/cursor.svg') 2 2, pointer !important;
+  @media (hover: hover) and (pointer: fine) {
+    .cursor-pointer {
+      cursor: url('/cursor.svg') 2 2, pointer !important;
+    }
   }
 
   .font-display { font-family: 'Fredoka One', cursive; }
@@ -113,11 +119,39 @@
     box-shadow: 0 8px 32px rgba(55, 99, 163, 0.12);
   }
 
+  /* Mobile-first lighter glass effect (reduces GPU raster lag during scrolling) */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(116, 162, 221, 0.2);
+  }
+
+  @media (min-width: 768px) {
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+  }
+
+  /* Lightweight GPU-composited CSS animations */
+  @keyframes gentle-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+  .animate-gentle-pulse {
+    animation: gentle-pulse 1.8s ease-in-out infinite;
+    transform: translateZ(0);
+  }
+
+  @keyframes gentle-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .animate-gentle-float {
+    animation: gentle-float 3.5s ease-in-out infinite;
+    transform: translateZ(0);
   }
 
   .btn-primary {

@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useCallback, useEffect, useRef } from 'react'
+import { useState, createContext, useContext, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
 import { createPortal } from 'react-dom'
 import type { Variants } from 'motion/react'
 import { motion, AnimatePresence } from 'motion/react'
@@ -9,9 +9,11 @@ import {
   Palette, Coins, FileText,
   Maximize2, Minimize2
 } from 'lucide-react'
-import AdminPortfolioPage from './AdminPortfolioPage'
-import AdminLoginPage, { checkIsAdminAuthenticated, logoutAdmin } from './AdminLoginPage'
-import { isSupabaseConfigured, getPortfoliosFromDB } from './lib/supabase'
+import { checkIsAdminAuthenticated, logoutAdmin } from './lib/auth'
+import { isSupabaseConfigured, getPortfoliosFromDB, getThumbnailUrl } from './lib/supabase'
+
+const AdminLoginPage = lazy(() => import('./AdminLoginPage'))
+const AdminPortfolioPage = lazy(() => import('./AdminPortfolioPage'))
 
 
 
@@ -564,21 +566,23 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
 
   return (
     <section id="hero" className="relative flex-1 flex flex-col items-center justify-center overflow-hidden px-3 sm:px-6 py-1 sm:py-4">
-      {/* Decorative background orbs */}
-      <div className="absolute top-12 left-1/4 w-72 h-72 md:w-96 md:h-96 rounded-full bg-sky-200/20 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-12 right-1/4 w-60 h-60 md:w-80 md:h-80 rounded-full bg-sky-300/15 blur-3xl pointer-events-none" />
+      {/* Decorative background orbs with zero-cost radial gradients */}
+      <div className="absolute top-12 left-1/4 w-72 h-72 md:w-96 md:h-96 rounded-full bg-[radial-gradient(circle,rgba(159,197,232,0.3)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-12 right-1/4 w-60 h-60 md:w-80 md:h-80 rounded-full bg-[radial-gradient(circle,rgba(116,162,221,0.22)_0%,transparent_70%)] pointer-events-none" />
 
       {/* ─── MOBILE VIEW (< md): Layout matching user mockup ─── */}
       <div className="md:hidden flex flex-col items-center text-center gap-1.5 sm:gap-2 w-full max-w-sm mx-auto my-auto select-none">
         {/* 1. Mascot Character with soft circular backdrop */}
         <div className="relative flex items-center justify-center w-24 h-24 my-0.5">
           <div className="w-20 h-20 rounded-full bg-sky-100/50 border border-dashed border-sky-200/70 absolute inset-0 m-auto pointer-events-none" />
-          <motion.img
-            src="/Original%20Character.png"
+          <img
+            src="/Original Character.webp"
             alt="Mittsunee Mascot"
-            className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none"
-            animate={{ y: [0, -3, 0] }}
-            transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+            className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none animate-gentle-float"
+            width={96}
+            height={96}
+            loading="eager"
+            decoding="async"
           />
         </div>
 
@@ -799,12 +803,12 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
             <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-sky-100/40" />
           </div>
 
-          <motion.img
-            src="/Original%20Character.png"
+          <img
+            src="/Original Character.webp"
             alt="Mittsunee Original Character"
-            className="relative z-10 w-full max-w-[210px] sm:max-w-xs md:max-w-sm max-h-[30vh] sm:max-h-[38vh] md:max-h-[48vh] object-contain drop-shadow-xl select-none"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+            className="relative z-10 w-full max-w-[210px] sm:max-w-xs md:max-w-sm max-h-[30vh] sm:max-h-[38vh] md:max-h-[48vh] object-contain drop-shadow-xl select-none animate-gentle-float"
+            loading="eager"
+            decoding="async"
           />
 
           {/* Floating badges */}
@@ -978,15 +982,24 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
           onMouseLeave={handleMouseLeave}
           className="relative flex-1 min-h-0 flex items-center justify-center bg-sky-50/60 p-4 sm:p-8 md:p-10 overflow-hidden"
         >
+          {/* Progressive instant preview: render low-res thumbnail instantly while high-res loads */}
+          {!imgLoaded && (
+            <img
+              src={getThumbnailUrl(item.image)}
+              alt={item.title}
+              className="absolute max-h-[48vh] sm:max-h-[54vh] md:max-h-[58vh] w-auto max-w-full object-contain rounded-xl select-none filter blur-xs opacity-60 pointer-events-none transition-opacity"
+            />
+          )}
+
           {/* Loading Eye indicator while high-res artwork loads */}
           {!imgLoaded && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none gap-2">
-              <motion.img
-                src="/Loading%20Eye.png"
+              <img
+                src="/Loading%20Eye.webp"
                 alt="Loading preview"
-                className="w-24 sm:w-32 h-auto object-contain select-none opacity-85 drop-shadow-xs"
-                animate={{ opacity: [0.6, 1, 0.6], scale: [0.98, 1.02, 0.98] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-20 sm:w-28 h-auto object-contain select-none opacity-85 drop-shadow-xs animate-gentle-pulse"
+                width={112}
+                height={56}
               />
               <span className="text-[10px] text-sky-400 font-medium">Opening artwork preview...</span>
             </div>
@@ -1117,24 +1130,16 @@ function PortfolioOverallLoader() {
       {/* Animated glowing container with Mittsunee Loading Eye */}
       <div className="relative mb-5 flex flex-col items-center">
         {/* Soft glowing aura behind the eyes */}
-        <motion.div
-          animate={{ scale: [0.95, 1.15, 0.95], opacity: [0.35, 0.75, 0.35] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -inset-6 rounded-3xl bg-sky-200/50 blur-xl pointer-events-none"
-        />
+        <div className="absolute -inset-6 rounded-3xl bg-[radial-gradient(circle,rgba(159,197,232,0.45)_0%,transparent_70%)] pointer-events-none" />
 
         {/* Decorative subtle border frame with animated Loading Eyes */}
-        <div className="relative px-6 py-4 rounded-3xl bg-white/90 backdrop-blur-md border border-sky-100 shadow-sm flex items-center justify-center">
-          <motion.img
-            src="/Loading%20Eye.png"
+        <div className="relative px-6 py-4 rounded-3xl bg-white/95 border border-sky-100 shadow-sm flex items-center justify-center">
+          <img
+            src="/Loading%20Eye.webp"
             alt="Loading artworks"
-            className="w-40 sm:w-52 h-auto object-contain drop-shadow-xs select-none"
-            animate={{
-              scale: [0.97, 1.03, 0.97],
-              opacity: [0.85, 1, 0.85],
-              y: [0, -3, 0],
-            }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-36 sm:w-48 h-auto object-contain drop-shadow-xs select-none animate-gentle-pulse"
+            width={192}
+            height={96}
           />
 
           {/* Floating cute sparkle accents */}
@@ -1195,48 +1200,50 @@ function PortfolioCard({
   index?: number
   onClick: () => void
 }) {
+  const thumbUrl = getThumbnailUrl(item.image)
+  const [useFallback, setUseFallback] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
+
+  const currentSrc = useFallback ? item.image : thumbUrl
 
   // Immediately reveal if image is already cached by the browser
   useEffect(() => {
     if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
       setIsLoaded(true)
     }
-  }, [item.image])
+  }, [currentSrc])
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 32 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.45,
-        delay: Math.min((index % 6) * 0.07, 0.35),
-        ease: [0.22, 1, 0.36, 1],
+        duration: 0.35,
+        delay: Math.min((index % 6) * 0.05, 0.25),
+        ease: 'easeOut',
       }}
       onClick={onClick}
-      className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-2xs hover:shadow-md transition-transform duration-200 hover:-translate-y-1.5 will-change-transform flex flex-col"
+      className="group relative card overflow-hidden cursor-pointer bg-white border border-sky-100/90 shadow-2xs hover:shadow-md transition-all duration-200 hover:-translate-y-1 flex flex-col"
     >
       {/* Proportionate Aspect Ratio Frame */}
       <div className="relative w-full aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-1 sm:p-2">
         {/* Lightweight Skeleton with Loading Eye until image is loaded */}
         {!isLoaded && !hasError && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 pointer-events-none p-2 text-center">
-            <motion.div
-              animate={{ opacity: [0.55, 1, 0.55], scale: [0.97, 1.02, 0.97] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-              className="flex flex-col items-center justify-center gap-1"
-            >
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-sky-50/90 pointer-events-none p-2 text-center animate-gentle-pulse">
+            <div className="flex flex-col items-center justify-center gap-1">
               <img
-                src="/Loading%20Eye.png"
+                src="/Loading%20Eye.webp"
                 alt="Loading artwork"
-                className="w-14 sm:w-20 h-auto object-contain select-none drop-shadow-2xs opacity-85"
+                className="w-12 sm:w-16 h-auto object-contain select-none drop-shadow-2xs opacity-85"
+                width={64}
+                height={32}
               />
               <span className="text-[8px] sm:text-[9px] font-medium text-sky-400 tracking-wide">
                 Loading...
               </span>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -1249,15 +1256,21 @@ function PortfolioCard({
         ) : (
           <img
             ref={imgRef}
-            src={item.image}
+            src={currentSrc}
             alt={item.title}
+            loading={index < 4 ? "eager" : "lazy"}
             decoding="async"
             onLoad={() => setIsLoaded(true)}
             onError={() => {
-              setHasError(true)
-              setIsLoaded(true)
+              if (!useFallback) {
+                // Fallback to original high-res URL if transformation is unavailable
+                setUseFallback(true)
+              } else {
+                setHasError(true)
+                setIsLoaded(true)
+              }
             }}
-            className={`w-full h-full object-contain rounded-lg sm:rounded-xl transition-transform duration-300 group-hover:scale-105 will-change-transform ${
+            className={`w-full h-full object-contain rounded-lg sm:rounded-xl transition-all duration-200 group-hover:scale-105 ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -1502,7 +1515,7 @@ function PortfolioSection() {
                 {isLoadingMore ? (
                   <div className="flex items-center gap-2 text-sky-500 font-medium bg-white/95 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-sky-100 shadow-xs text-xs animate-pulse">
                     <img
-                      src="/Loading%20Eye.png"
+                      src="/Loading%20Eye.webp"
                       alt="Loading more"
                       className="h-3.5 sm:h-4 w-auto object-contain select-none"
                     />
@@ -2003,7 +2016,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center px-2 py-7 sm:px-5 sm:py-6 md:p-8 bg-sky-950/45 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center px-2 py-7 sm:px-5 sm:py-6 md:p-8 bg-sky-950/45 backdrop-blur-xs sm:backdrop-blur-sm"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.88, y: 35 }}
@@ -2011,14 +2024,14 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         exit={{ opacity: 0, scale: 0.92, y: 25 }}
         transition={{ type: 'spring', damping: 26, stiffness: 280 }}
         onClick={e => e.stopPropagation()}
-        className={`relative w-full bg-white/95 backdrop-blur-xl shadow-2xl border border-sky-100 flex flex-col overflow-hidden transition-all duration-300 ${
+        className={`relative w-full bg-white shadow-2xl border border-sky-100 flex flex-col overflow-hidden transition-all duration-300 ${
           isExpanded
             ? 'max-w-[98vw] h-[97vh] rounded-2xl'
             : 'max-w-5xl max-h-[82dvh] h-[80dvh] sm:max-h-[90dvh] sm:h-[86dvh] rounded-2xl sm:rounded-3xl'
         }`}
       >
         {/* Card Header / Window Controls */}
-        <div className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white/95 backdrop-blur-md border-b border-sky-100/80 gap-2 sm:gap-3">
+        <div className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white/98 sm:bg-white/95 border-b border-sky-100/80 gap-2 sm:gap-3">
           {/* Left: Active Page Indicator & Quick Switcher Tabs */}
           <div className="flex items-center gap-1.5 sm:gap-4 min-w-0">
             {/* Active Page Badge */}
@@ -2078,7 +2091,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="overflow-y-auto flex-1 custom-scrollbar flex flex-col">
+        <div className="overflow-y-auto flex-1 custom-scrollbar flex flex-col overscroll-contain">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePage}
@@ -2199,19 +2212,26 @@ export default function App() {
 
   // If secret route /cyela is active, show the Admin Login or Admin Portfolio Page
   if (isAdmin) {
-    if (!isAdminAuth) {
-      return (
-        <AdminLoginPage
-          onSuccess={() => setIsAdminAuth(true)}
-          onExit={handleExitAdmin}
-        />
-      )
-    }
     return (
-      <AdminPortfolioPage
-        onExit={handleExitAdmin}
-        onLogout={handleLogoutAdmin}
-      />
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-[#FAFCFF] flex items-center justify-center text-sky-400 font-medium">
+            Loading Admin...
+          </div>
+        }
+      >
+        {!isAdminAuth ? (
+          <AdminLoginPage
+            onSuccess={() => setIsAdminAuth(true)}
+            onExit={handleExitAdmin}
+          />
+        ) : (
+          <AdminPortfolioPage
+            onExit={handleExitAdmin}
+            onLogout={handleLogoutAdmin}
+          />
+        )}
+      </Suspense>
     )
   }
 

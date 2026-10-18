@@ -29,7 +29,7 @@ export interface AdminPortfolioItem {
 const INITIAL_ARTWORKS: AdminPortfolioItem[] = []
 
 const SAMPLE_PRESET_IMAGES = [
-  { label: 'Original Character', url: '/Original Character.png' },
+  { label: 'Original Character', url: '/Original Character.webp' },
   { label: 'Pastel Fantasy 1', url: 'https://picsum.photos/seed/samplefox1/600/800' },
   { label: 'Pastel Fantasy 2', url: 'https://picsum.photos/seed/samplefox2/600/600' },
   { label: 'Pastel Fantasy 3', url: 'https://picsum.photos/seed/samplefox3/600/750' },
@@ -189,7 +189,7 @@ export default function AdminPortfolioPage({ onExit, onLogout }: AdminPortfolioP
     setIsSubmitting(true)
 
     try {
-      let finalImageUrl = imagePreview || '/Original Character.png'
+      let finalImageUrl = imagePreview || '/Original Character.webp'
 
       if (isSupabaseConfigured && selectedFile) {
         showToast('⏳ Uploading image to Supabase Storage...')
@@ -338,7 +338,7 @@ export default function AdminPortfolioPage({ onExit, onLogout }: AdminPortfolioP
           <div className="flex items-center gap-3.5">
             <div className="relative">
               <img
-                src="/Original Character.png"
+                src="/Original Character.webp"
                 alt="Mittsunee"
                 className="w-10 h-10 rounded-full object-cover border-2 border-sky-300 shadow-xs"
               />
@@ -777,7 +777,7 @@ export default function AdminPortfolioPage({ onExit, onLogout }: AdminPortfolioP
                 <div className="w-full max-w-xs group relative rounded-2xl overflow-hidden bg-white border border-sky-100 shadow-md hover:shadow-xl transition-all">
                   <div className="relative aspect-square overflow-hidden bg-sky-50/70 flex items-center justify-center p-2">
                     <img
-                      src={imagePreview || '/Original Character.png'}
+                      src={imagePreview || '/Original Character.webp'}
                       alt={title || 'Preview Artwork'}
                       className="w-full h-full object-contain rounded-xl transition-transform duration-500 group-hover:scale-105"
                     />
