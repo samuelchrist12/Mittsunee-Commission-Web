@@ -49,21 +49,19 @@
     background-size: 28px 28px;
   }
 
-  /* Custom cursor enabled ONLY on devices with a mouse/fine pointer */
-  @media (hover: hover) and (pointer: fine) {
-    html, body {
-      cursor: url('/cursor.svg') 2 2, auto;
-    }
+  /* Custom cursor across desktop and pointer interactions */
+  html, body {
+    cursor: url('/cursor.svg') 2 2, url('/cursor.png') 2 2, auto;
+  }
 
-    a,
-    button,
-    [role="button"],
-    .cursor-pointer,
-    label.cursor-pointer,
-    select,
-    summary {
-      cursor: url('/cursor.svg') 2 2, pointer;
-    }
+  a,
+  button,
+  [role="button"],
+  .cursor-pointer,
+  label.cursor-pointer,
+  select,
+  summary {
+    cursor: url('/cursor.svg') 2 2, url('/cursor.png') 2 2, pointer;
   }
 
   /* Form text inputs keep standard text selection cursor */
@@ -99,10 +97,8 @@
 
 /* ─── Utilities ─────────────────────────────────────────────────────────── */
 @layer utilities {
-  @media (hover: hover) and (pointer: fine) {
-    .cursor-pointer {
-      cursor: url('/cursor.svg') 2 2, pointer !important;
-    }
+  .cursor-pointer {
+    cursor: url('/cursor.svg') 2 2, url('/cursor.png') 2 2, pointer !important;
   }
 
   .font-display { font-family: 'Fredoka One', cursive; }

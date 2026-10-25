@@ -23,6 +23,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "docx": "^9.14.0",
     "oxlint": "^1.81.0",
     "sharp": "^0.35.5",
     "typescript": "~6.0.2",

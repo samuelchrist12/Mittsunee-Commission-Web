@@ -3,14 +3,14 @@ import { createPortal } from 'react-dom'
 import type { Variants } from 'motion/react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
-  Heart, Mail, ChevronDown, X, ExternalLink,
+  Heart, ChevronDown, X, ExternalLink,
   ZoomIn, ChevronLeft, ChevronRight, Globe,
   ShoppingCart, MessageCircle, Star, Sparkles,
   Palette, Coins, FileText,
   Maximize2, Minimize2
 } from 'lucide-react'
 import { checkIsAdminAuthenticated, logoutAdmin } from './lib/auth'
-import { isSupabaseConfigured, getPortfoliosFromDB, getThumbnailUrl } from './lib/supabase'
+import { isSupabaseConfigured, getPortfoliosFromDB, getThumbnailUrl, registerCacheClearListener } from './lib/supabase'
 
 const AdminLoginPage = lazy(() => import('./AdminLoginPage'))
 const AdminPortfolioPage = lazy(() => import('./AdminPortfolioPage'))
@@ -237,6 +237,83 @@ export const INITIAL_PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
 ]
 
+// ─── Randomized Portfolio Session Helpers ─────────────────────────────────────
+
+/**
+ * Fisher-Yates array shuffle for a uniform, unbiased random distribution.
+ */
+export function shuffleArray<T>(array: readonly T[] | T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+// Holds the randomized portfolio items for the current page session.
+// Re-randomized each time the web page is reloaded / refreshed,
+// while remaining stable during client-side navigation between tabs.
+let sessionShuffledPortfolios: PortfolioItem[] = shuffleArray(INITIAL_PORTFOLIO_ITEMS)
+let hasShuffledDBPortfolios = false
+let portfolioFetchPromise: Promise<PortfolioItem[]> | null = null
+
+export function getSessionShuffledPortfolios(): PortfolioItem[] {
+  return sessionShuffledPortfolios
+}
+
+export function resetSessionPortfolios(): void {
+  hasShuffledDBPortfolios = false
+  sessionShuffledPortfolios = shuffleArray(INITIAL_PORTFOLIO_ITEMS)
+  portfolioFetchPromise = null
+}
+
+// Invalidate session cache when admin updates or deletes an artwork
+registerCacheClearListener(() => {
+  resetSessionPortfolios()
+})
+
+/**
+ * Loads portfolio items from Supabase (or session cache) and randomizes their order.
+ * On browser reload, this produces a new random order every time.
+ */
+export function loadAndShufflePortfolios(forceRefresh = false): Promise<PortfolioItem[]> {
+  if (hasShuffledDBPortfolios && !forceRefresh) {
+    return Promise.resolve(sessionShuffledPortfolios)
+  }
+
+  if (portfolioFetchPromise && !forceRefresh) {
+    return portfolioFetchPromise
+  }
+
+  portfolioFetchPromise = (async () => {
+    try {
+      if (isSupabaseConfigured) {
+        const dbItems = await getPortfoliosFromDB(forceRefresh)
+        if (dbItems && dbItems.length > 0) {
+          const mapped: PortfolioItem[] = dbItems.map(d => ({
+            id: d.id,
+            category: d.category,
+            title: d.title,
+            subtitle: d.subtitle,
+            image: d.image_url,
+          }))
+          // Randomize order on initial web load or refresh
+          sessionShuffledPortfolios = shuffleArray(mapped)
+          hasShuffledDBPortfolios = true
+        }
+      }
+    } catch (err) {
+      console.error('Failed to sync portfolios from Supabase:', err)
+    } finally {
+      portfolioFetchPromise = null
+    }
+    return sessionShuffledPortfolios
+  })()
+
+  return portfolioFetchPromise
+}
+
 interface PriceRow {
   shot: string
   usd: number
@@ -294,11 +371,11 @@ const COMMISSION_DATA: CommissionCategory[] = [
         ],
         addons: [
           { name: 'Additional Character', label: '+100% base price' },
-          { name: 'Background (Simple/White/Transparent)', label: 'FREE' },
-          { name: 'Custom / Complex Background', label: '+$10–$70 (Negotiable)' },
-          { name: 'VTuber Support (PFP/Thumbnail/Banner)', label: 'FREE (Non-merch)' },
-          { name: 'Commercial Use (For Asset/Merchandise)', label: '+100% base price' },
-          { name: 'Rush Fee (2-4 Days)', label: '2x Price' },
+          { name: 'Background (Simple / White / Transparent)', label: 'FREE' },
+          { name: 'Custom / Complex Background', label: 'Negotiable' },
+          { name: 'VTuber Support (PFP / Thumbnail / Banner)', label: 'FREE (Non-merchandise)' },
+          { name: 'Commercial Use (For Asset / Merchandise / Monetized projects)', label: '+100% base price' },
+          { name: 'Rush Fee (2–4 Days)', label: '2x Price' },
         ],
       },
     ],
@@ -312,13 +389,13 @@ const COMMISSION_DATA: CommissionCategory[] = [
       {
         name: 'Chibi Style',
         prices: [
-          { shot: 'Full Body Chibi', usd: 30, idr: 100_000 },
+          { shot: 'Full Body Chibi', usd: 35, idr: 100_000 },
         ],
         addons: [
           { name: 'Additional Character', label: '+100% base price' },
-          { name: 'Background (Simple/Transparent)', label: 'FREE' },
-          { name: 'VTuber Support (PFP/Thumbnail/Banner)', label: 'FREE (Non-merch)' },
-          { name: 'Commercial Use (For Asset/Merchandise)', label: '+100% base price' },
+          { name: 'Background (Simple / Transparent)', label: 'FREE' },
+          { name: 'VTuber Support (PFP / Thumbnail / Banner)', label: 'FREE (Non-merchandise)' },
+          { name: 'Commercial Use (For Asset / Merchandise)', label: '+100% base price' },
         ],
       },
     ],
@@ -331,7 +408,7 @@ const COMMISSION_DATA: CommissionCategory[] = [
     types: [
       {
         name: 'Surprise Commission (SKEB Style)',
-        note: 'Concept and composition decided by artist. Design revisions are not included.',
+        note: 'Concept and composition decided by artist. Design revisions are not included for SKEB commissions.',
         prices: [
           { shot: 'Headshot', usd: 30, idr: 85_000 },
           { shot: 'Bust Up', usd: 40, idr: 120_000 },
@@ -341,34 +418,39 @@ const COMMISSION_DATA: CommissionCategory[] = [
         addons: [
           { name: 'Background', label: 'FREE (Artist choice)' },
           { name: 'Additional Character', label: '+100% base price' },
-          { name: 'Rush Fee (2-4 Days)', label: '2x Price' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'live2d',
-    name: 'Live2D',
-    emoji: '🎭',
-    desc: 'Layer-separated PSD model art, cut and ready for riggers. (Art Only — Rigging NOT included).',
-    types: [
-      {
-        name: 'Model Art (Ready to Rig)',
-        note: 'Delivered as organized layered PSD ready for rigging. Rigging service is NOT included.',
-        prices: [
-          { shot: 'Half Body Model Art', usd: 180, idr: 850_000 },
-          { shot: 'Full Body Model Art', usd: 300, idr: 1_500_000 },
-        ],
-        addons: [
-          { name: 'Character Design by Artist', usd: 80, idr: 350_000 },
-          { name: 'Additional Outfit', usd: 60, idr: 250_000 },
-          { name: 'Additional Hairstyle', usd: 40, idr: 150_000 },
-          { name: 'Extra Expression / Hand Toggle', usd: 15, idr: 50_000 },
+          { name: 'Rush Fee (2–4 Days)', label: '2x Price' },
         ],
       },
     ],
   },
 ]
+
+// ─── Live2D Model Art (Temporarily hidden as marked in PRICELIST_AND_TOS.md: "Hide dulu") ───
+// Kept here for easy re-enabling in COMMISSION_DATA when commissions re-open:
+/*
+export const LIVE2D_COMMISSION_DATA: CommissionCategory = {
+  id: 'live2d',
+  name: 'Live2D',
+  emoji: '🎭',
+  desc: 'Layer-separated PSD model art, cut and ready for riggers. (Art Only — Rigging NOT included).',
+  types: [
+    {
+      name: 'Model Art (Ready to Rig)',
+      note: 'Delivered as organized layered PSD ready for rigging. Rigging service is NOT included.',
+      prices: [
+        { shot: 'Half Body Model Art', usd: 180, idr: 850_000 },
+        { shot: 'Full Body Model Art', usd: 300, idr: 1_500_000 },
+      ],
+      addons: [
+        { name: 'Character Design by Artist', usd: 80, idr: 350_000 },
+        { name: 'Additional Outfit', usd: 60, idr: 250_000 },
+        { name: 'Additional Hairstyle', usd: 40, idr: 150_000 },
+        { name: 'Extra Expression / Hand Toggle', usd: 15, idr: 50_000 },
+      ],
+    },
+  ],
+}
+*/
 
 const TOS_DATA: ToSSection[] = [
   {
@@ -377,7 +459,7 @@ const TOS_DATA: ToSSection[] = [
     table: [
       { tier: 'Tier 0: Personal', usage: 'Private use, wallpapers, personal social avatars', fee: 'Included' },
       { tier: 'Tier 1: VTuber Support', usage: 'PFP, streaming thumbnail, banner (non-merchandise)', fee: 'FREE ✦' },
-      { tier: 'Tier 2: Commercial Asset', usage: 'Merchandise, company assets, monetized content', fee: '+100%' },
+      { tier: 'Tier 2: Commercial Asset', usage: 'Merchandise, company assets, monetized content', fee: '+100% Base' },
     ],
     items: [
       'Orders default to Tier 0 (Personal Use) / Tier 1 (VTuber Support).',
@@ -390,51 +472,56 @@ const TOS_DATA: ToSSection[] = [
     id: '02',
     title: 'General Guidelines',
     items: [
-      'I reserve the right to decline commissions that do not align with my style.',
-      'Please do not push for rush turnarounds outside agreed milestones.',
-      'Clear references help avoid misunderstandings and delays.',
-      'Communication should remain respectful. Harassment will lead to immediate cancellation.',
-      'Finished pieces may be featured in my public portfolio unless an NDA was agreed upon.',
-      'AI images can be shared as visual mood references, but will not be directly copied.',
-      'I do not accept: explicit minor NSFW, non-consensual real person art, or extreme gore.',
+      'I reserve the right to decline any commission that contains: explicit NSFW, extreme violence, discriminatory content, or anything I am uncomfortable drawing.',
+      'Commissions will be processed on a first come, first served basis.',
     ],
   },
   {
     id: '03',
-    title: 'Workflow & Revisions',
+    title: 'Process & Revisions',
     items: [
-      'Submit your request through VGen or the direct inquiry channels below.',
-      'I review each request and reply within 1 to 3 business days.',
-      'A 50% deposit is required before work starts on the initial sketch.',
-      'Rough sketches will be shared for feedback before lineart and coloring.',
-      'Two revision rounds are included at the sketch phase. Edits after lineart incur extra fees.',
-      'Full-resolution art files are delivered once the remaining balance is settled.',
-      'Estimated turnaround is 1 to 3 weeks depending on queue position and complexity.',
+      'Work will begin after the artist provides the initial sketch and the client confirms it.',
+      'Estimated turnaround time: **3–14 business days**, depending on queue and complexity.',
+      'Client will receive an initial sketch for approval.',
+      '**Unlimited revisions** are allowed during the sketching phase.',
+      'Once the illustration has entered the lineart phase, any revision will be subject to an **additional fee of 20% of the base price per revision**.',
     ],
   },
   {
     id: '04',
-    title: 'Copyright & Attribution',
+    title: 'Pricing & Payment',
     items: [
-      'The artist retains intellectual property and copyright over the artwork.',
-      'You receive license rights corresponding to your selected usage tier.',
-      'Please credit @Mittsunee whenever posting or showcasing the artwork.',
-      'Do not claim the illustration as your own creation.',
-      'Do not crop, remove, or obscure the artist watermark without written agreement.',
-      'Reselling raw project files or minting the art as NFTs is strictly prohibited.',
+      'Prices vary depending on the details (fullbody, bust-up, background, etc.).',
+      'Final pricing will be discussed and confirmed before starting.',
+      'Payments are made via **PayPal** or **Indonesia bank transfer / QRIS**.',
+      '**No refunds after the work has started.**',
     ],
   },
   {
     id: '05',
-    title: 'Payments, Refunds & Rush Orders',
+    title: 'Copyright & Usage',
     items: [
-      'Accepted payment options: PayPal (international) and GoPay, DANA, or BCA (Indonesia).',
-      'A 50% deposit is required to begin. The final 50% is due upon completion.',
-      'Rush orders (completed within 7 days): +30% of the total quote.',
-      'Cancellations before sketching starts receive a full refund minus transfer fees.',
-      'Cancellations during the sketch phase qualify for a 50% refund.',
-      'No refunds are available once lineart has started.',
-      'A full refund will be provided if a commission is cancelled on my end.',
+      'I retain rights to the illustration.',
+      'The artwork may be used in my portfolio (unless the client specifically requests otherwise).',
+      '**Strictly prohibited**: Claiming the artwork as your own, or using the artwork for NFTs or AI training purposes.',
+    ],
+  },
+  {
+    id: '06',
+    title: 'File Delivery',
+    items: [
+      'Final files will be delivered in **.PNG / .JPG** format (and **.CLIP** if agreed upon).',
+      'Files are strictly for personal use only and not for resale.',
+    ],
+  },
+  {
+    id: '07',
+    title: 'Communication & Agreement',
+    items: [
+      'All communication will be conducted via DM (Instagram/Facebook/X), Discord, or email as provided in the commission form.',
+      'Please be cautious of potential scams impersonating “mittsune” asking for unreasonable additional fees.',
+      'I will never request extra payment outside of what has been discussed and agreed upon through the official communication channels.',
+      'If you\'re unsure or suspect suspicious activity, don\'t hesitate to contact me directly to confirm.',
     ],
   },
 ]
@@ -451,7 +538,7 @@ const FILTER_TABS = [
 
 const CurrencyCtx = createContext<{ currency: Currency; toggle: () => void }>({
   currency: 'usd',
-  toggle: () => {},
+  toggle: () => { },
 })
 const useCurrency = () => useContext(CurrencyCtx)
 
@@ -511,6 +598,29 @@ function FacebookIcon({ size = 18, className = '' }: { size?: number; className?
   )
 }
 
+function GoogleFormsIcon({ size = 18, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="10" y1="12" x2="16" y2="12" />
+      <line x1="10" y1="16" x2="16" y2="16" />
+      <circle cx="7.5" cy="12" r="0.75" fill="currentColor" />
+      <circle cx="7.5" cy="16" r="0.75" fill="currentColor" />
+    </svg>
+  )
+}
+
 // ─── Hero Section ────────────────────────────────────────────────────────────
 
 interface HeroSectionProps {
@@ -523,32 +633,28 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
     { icon: XIcon, label: 'X (Twitter)', href: 'https://x.com/Mittsunee', color: '#0F1419' },
     { icon: Heart, label: 'Instagram', href: 'https://www.instagram.com/mittsunee/', color: '#E1306C' },
     { icon: FacebookIcon, label: 'Facebook', href: 'https://www.facebook.com/gazzela.chi', color: '#1877F2' },
-    { icon: Mail, label: 'Email', href: 'mailto:mittsune112@gmail.com', color: '#74A2DD' },
+    { icon: GoogleFormsIcon, label: 'Google Form', href: 'https://docs.google.com/forms/d/e/1FAIpQLSf2kTvh_4WwPP53qwRnWPVMclcxwKTcoQ7UnmZiavm4UcjffA/viewform', color: '#7248B9' },
   ]
 
   const navItems = [
     {
       id: 'portfolio' as const,
       title: 'Portfolio',
-      desc: 'Art Gallery',
       icon: Palette,
     },
     {
       id: 'pricing' as const,
       title: 'Commission',
-      desc: 'Price Tiers',
       icon: Coins,
     },
     {
       id: 'tos' as const,
       title: 'Terms',
-      desc: 'Guidelines',
       icon: FileText,
     },
     {
       id: 'contact' as const,
       title: 'Contact',
-      desc: 'Order & Links',
       icon: MessageCircle,
     },
   ]
@@ -576,7 +682,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
         <div className="relative flex items-center justify-center w-24 h-24 my-0.5">
           <div className="w-20 h-20 rounded-full bg-sky-100/50 border border-dashed border-sky-200/70 absolute inset-0 m-auto pointer-events-none" />
           <img
-            src="/Original Character.webp"
+            src="/Original Character2.png"
             alt="Mittsunee Mascot"
             className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none animate-gentle-float"
             width={96}
@@ -595,25 +701,23 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           <button
             type="button"
             onClick={() => onNavigate('pricing')}
-            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${
-              COMMISSION_STATUS === 'open'
-                ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
-                : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
-            }`}
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${COMMISSION_STATUS === 'open'
+              ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
+              : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
+              }`}
           >
-            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-              COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
-            }`} />
+            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
+              }`} />
             {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
           </button>
         </div>
 
         {/* 3. Mittsunee Logo */}
-        <div className="flex justify-center">
+        <div className="flex justify-center py-0.5">
           <img
-            src="/Type%20Logo.png"
+            src="/Type%20Logo2.png"
             alt="Mittsunee"
-            className="h-7 w-auto object-contain select-none"
+            className="h-10 sm:h-12 w-auto object-contain select-none"
           />
         </div>
 
@@ -622,14 +726,8 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           Character Art · Chibi · Live2D ✨
         </p>
 
-        {/* 5. Quick Navigation Title */}
-        <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-sky-400 pt-0.5">
-          <Sparkles size={9} />
-          <span>QUICK NAVIGATION</span>
-        </div>
-
-        {/* 6. 2x2 Grid Quick Navigation Cards */}
-        <div className="grid grid-cols-2 gap-2 w-full max-w-[270px] mx-auto">
+        {/* 5. 2x2 Grid Quick Navigation Cards */}
+        <div className="grid grid-cols-2 gap-2 w-full max-w-[270px] mx-auto pt-1">
           {navItems.map(item => (
             <motion.button
               key={item.id}
@@ -698,47 +796,39 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
             <button
               type="button"
               onClick={() => onNavigate('pricing')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
-                COMMISSION_STATUS === 'open'
-                  ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
-                  : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
-              }`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${COMMISSION_STATUS === 'open'
+                ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
+                : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
+                }`}
             >
-              <span className={`w-2 h-2 rounded-full animate-pulse ${
-                COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
-              }`} />
+              <span className={`w-2 h-2 rounded-full animate-pulse ${COMMISSION_STATUS === 'open' ? 'bg-green-500' : 'bg-red-500'
+                }`} />
               {COMMISSION_STATUS === 'open' ? 'Commissions OPEN' : 'Commissions CLOSED'}
             </button>
           </motion.div>
 
           {/* Mittsunee Logo */}
-          <motion.div variants={itemVariants} className="flex justify-start">
+          <motion.div variants={itemVariants} className="flex justify-start py-0.5">
             <img
-              src="/Type%20Logo.png"
+              src="/Type%20Logo2.png"
               alt="Mittsunee"
-              className="h-12 lg:h-16 w-auto object-contain select-none"
+              className="h-16 lg:h-20 w-auto object-contain select-none drop-shadow-xs"
             />
           </motion.div>
 
           {/* Bio text */}
-          <motion.p variants={itemVariants} className="text-sky-500/80 text-sm md:text-base leading-relaxed max-w-md">
-            Hello! I'm Mittsunee, an illustrator specializing in{' '}
-            <span className="text-sky-400 font-semibold">character art</span>,{' '}
-            <span className="text-sky-400 font-semibold">chibi</span>, and{' '}
-            <span className="text-sky-400 font-semibold">Live2D model art</span>.
-            Welcome to my commission portfolio! ✨
+          <motion.p variants={itemVariants} className="text-sky-500/85 text-sm md:text-base leading-relaxed max-w-md">
+            Hi domo~ You can call me{' '}
+            <span className="text-sky-400 font-semibold">Mittsu</span> or{' '}
+            <span className="text-sky-400 font-semibold">Mi chan (she/her)</span>,<br />
+            I'm an artist from Indonesia working as a full time Illustrator and V-artist!{' '}
+            Mostly working with commissions <br />
+            <span className="inline-block mt-0.5">(*´∀｀)_🍵</span>
           </motion.p>
 
           {/* In-Hero Navigation Buttons */}
-          <motion.div variants={itemVariants} className="w-full max-w-lg space-y-2 pt-0.5">
-            <div className="flex items-center gap-2 justify-start">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
-                <Sparkles size={10} /> Quick Navigation
-              </span>
-              <div className="h-px bg-sky-200/50 flex-1" />
-            </div>
-
-            <div className="grid grid-cols-4 gap-2">
+          <motion.div variants={itemVariants} className="w-full max-w-lg pt-1">
+            <div className="grid grid-cols-4 gap-2.5">
               {navItems.map(item => (
                 <motion.button
                   key={item.id}
@@ -746,16 +836,13 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                   onClick={() => onNavigate(item.id)}
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="group flex flex-col items-center justify-center p-2.5 rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer"
+                  className="group flex flex-col items-center justify-center py-3 px-2 rounded-2xl bg-white/90 hover:bg-sky-50 border border-sky-100 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-1 transition-colors group-hover:scale-105">
+                  <div className="w-8 h-8 rounded-xl bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-1.5 transition-colors group-hover:scale-105">
                     <item.icon size={16} />
                   </div>
                   <span className="text-xs font-bold text-sky-600 group-hover:text-sky-700 leading-tight">
                     {item.title}
-                  </span>
-                  <span className="text-[10px] text-sky-400 font-medium">
-                    {item.desc}
                   </span>
                 </motion.button>
               ))}
@@ -804,7 +891,7 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </div>
 
           <img
-            src="/Original Character.webp"
+            src="/Original Character2.png"
             alt="Mittsunee Original Character"
             className="relative z-10 w-full max-w-[210px] sm:max-w-xs md:max-w-sm max-h-[30vh] sm:max-h-[38vh] md:max-h-[48vh] object-contain drop-shadow-xl select-none animate-gentle-float"
             loading="eager"
@@ -1016,9 +1103,8 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
               animate={{ opacity: imgLoaded ? 1 : 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.22 }}
-              className={`max-h-[48vh] sm:max-h-[54vh] md:max-h-[58vh] w-auto max-w-full object-contain rounded-xl shadow-xs select-none ${
-                isDesktop && imgLoaded ? 'cursor-none' : ''
-              }`}
+              className={`max-h-[48vh] sm:max-h-[54vh] md:max-h-[58vh] w-auto max-w-full object-contain rounded-xl shadow-xs select-none ${isDesktop && imgLoaded ? 'cursor-none' : ''
+                }`}
             />
           </AnimatePresence>
 
@@ -1270,9 +1356,8 @@ function PortfolioCard({
                 setIsLoaded(true)
               }
             }}
-            className={`w-full h-full object-contain rounded-lg sm:rounded-xl transition-all duration-200 group-hover:scale-105 ${
-              isLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`w-full h-full object-contain rounded-lg sm:rounded-xl transition-all duration-200 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
           />
         )}
 
@@ -1309,7 +1394,7 @@ function PortfolioCard({
 }
 
 function PortfolioSection() {
-  const [items, setItems] = useState<PortfolioItem[]>(INITIAL_PORTFOLIO_ITEMS)
+  const [items, setItems] = useState<PortfolioItem[]>(getSessionShuffledPortfolios)
   const isInitialLoading = items.length === 0
   const [filter, setFilter] = useState('all')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -1319,30 +1404,20 @@ function PortfolioSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
-  // Background sync from Supabase to pick up any new admin uploads
+  // Fetch or sync randomized portfolios from Supabase
   useEffect(() => {
     let isMounted = true
 
-    if (isSupabaseConfigured) {
-      getPortfoliosFromDB()
-        .then(dbItems => {
-          if (!isMounted) return
-          if (dbItems && dbItems.length > 0) {
-            setItems(
-              dbItems.map(d => ({
-                id: d.id,
-                category: d.category,
-                title: d.title,
-                subtitle: d.subtitle,
-                image: d.image_url,
-              }))
-            )
-          }
-        })
-        .catch(err => {
-          console.error('Failed to sync portfolios from Supabase:', err)
-        })
-    }
+    loadAndShufflePortfolios()
+      .then(shuffledItems => {
+        if (!isMounted) return
+        if (shuffledItems && shuffledItems.length > 0) {
+          setItems(shuffledItems)
+        }
+      })
+      .catch(err => {
+        console.error('Failed to sync portfolios from Supabase:', err)
+      })
 
     return () => {
       isMounted = false
@@ -1473,11 +1548,10 @@ function PortfolioSection() {
                   key={tab.id}
                   type="button"
                   onClick={() => handleFilterChange(tab.id)}
-                  className={`px-3 sm:px-5 py-1 sm:py-2 rounded-full text-[11px] sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                    filter === tab.id
-                      ? 'bg-sky-400 text-white shadow-xs'
-                      : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
-                  }`}
+                  className={`px-3 sm:px-5 py-1 sm:py-2 rounded-full text-[11px] sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${filter === tab.id
+                    ? 'bg-sky-400 text-white shadow-xs'
+                    : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
+                    }`}
                 >
                   {tab.label}
                 </button>
@@ -1560,22 +1634,20 @@ function CurrencyToggle() {
       <button
         type="button"
         onClick={() => currency === 'idr' && toggle()}
-        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-          currency === 'usd'
-            ? 'bg-sky-500 text-white shadow-xs'
-            : 'text-sky-600 hover:text-sky-800 hover:bg-sky-50/60'
-        }`}
+        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${currency === 'usd'
+          ? 'bg-sky-500 text-white shadow-xs'
+          : 'text-sky-600 hover:text-sky-800 hover:bg-sky-50/60'
+          }`}
       >
         $ USD
       </button>
       <button
         type="button"
         onClick={() => currency === 'usd' && toggle()}
-        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-          currency === 'idr'
-            ? 'bg-sky-500 text-white shadow-xs'
-            : 'text-sky-600 hover:text-sky-800 hover:bg-sky-50/60'
-        }`}
+        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${currency === 'idr'
+          ? 'bg-sky-500 text-white shadow-xs'
+          : 'text-sky-600 hover:text-sky-800 hover:bg-sky-50/60'
+          }`}
       >
         Rp IDR
       </button>
@@ -1632,9 +1704,8 @@ function CommissionCard({ category }: { category: CommissionCategory }) {
             {type.prices.map((row, i) => (
               <div
                 key={row.shot}
-                className={`flex items-center justify-between px-4 py-3 ${
-                  i % 2 === 0 ? 'bg-sky-50/50' : 'bg-white'
-                }`}
+                className={`flex items-center justify-between px-4 py-3 ${i % 2 === 0 ? 'bg-sky-50/50' : 'bg-white'
+                  }`}
               >
                 <span className="text-sky-600 font-medium text-sm">{row.shot}</span>
                 <PriceDisplay usd={row.usd} idr={row.idr} />
@@ -1686,7 +1757,7 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
           <motion.p variants={fadeUp} className="text-sky-400 text-sm font-medium mb-2">✦ Pricing</motion.p>
           <motion.h2 variants={fadeUp} className="section-title">Commission Prices</motion.h2>
           <motion.p variants={fadeUp} className="section-subtitle mt-2 mb-6">
-            All prices are negotiable for long-term clients.
+            Applicable for personal use & VTuber support · Estimated turnaround: 1–3 weeks
           </motion.p>
           {/* Currency toggle */}
           <motion.div variants={fadeUp} className="flex justify-center">
@@ -1701,11 +1772,10 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
               key={cat.id}
               type="button"
               onClick={() => setActiveTab(cat.id)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                activeTab === cat.id
-                  ? 'bg-sky-400 text-white shadow-xs'
-                  : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
-              }`}
+              className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === cat.id
+                ? 'bg-sky-400 text-white shadow-xs'
+                : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
+                }`}
             >
               <span>{cat.emoji}</span>
               <span>{cat.name}</span>
@@ -1756,6 +1826,20 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
 }
 
 // ─── ToS Section ─────────────────────────────────────────────────────────────
+
+function renderFormattedText(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g)
+  return parts.map((part, idx) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={idx} className="font-semibold text-sky-700">
+          {part.slice(2, -2)}
+        </strong>
+      )
+    }
+    return part
+  })
+}
 
 function ToSAccordion({ section }: { section: ToSSection }) {
   const [open, setOpen] = useState(false)
@@ -1811,13 +1895,13 @@ function ToSAccordion({ section }: { section: ToSSection }) {
               )}
 
               {/* Rules list */}
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-2.5">
                 {section.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-sky-500/90">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-sky-100 flex-shrink-0 flex items-center justify-center text-sky-400 text-xs font-bold">
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-sky-600/90 leading-relaxed">
+                    <span className="mt-0.5 w-4 h-4 rounded-full bg-sky-100 flex-shrink-0 flex items-center justify-center text-sky-500 text-xs font-bold">
                       {i + 1}
                     </span>
-                    {item}
+                    <span className="flex-1">{renderFormattedText(item)}</span>
                   </li>
                 ))}
               </ul>
@@ -1908,10 +1992,10 @@ function ContactSection() {
       primary: false,
     },
     {
-      label: 'Email',
-      description: 'Formal inquiries & invoices',
-      href: 'mailto:mittsune112@gmail.com',
-      icon: Mail,
+      label: 'Google Form',
+      description: 'Commission order form',
+      href: 'https://docs.google.com/forms/d/e/1FAIpQLSf2kTvh_4WwPP53qwRnWPVMclcxwKTcoQ7UnmZiavm4UcjffA/viewform',
+      icon: GoogleFormsIcon,
       primary: false,
     },
   ]
@@ -1950,9 +2034,8 @@ function ContactSection() {
               rel="noreferrer"
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className={`card p-3 sm:p-4 flex flex-col items-center text-center gap-2 sm:gap-2.5 transition-all duration-200 cursor-pointer rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${
-                c.primary ? 'border-sky-300/80 shadow-xs' : ''
-              } ${idx === 4 ? 'col-span-2 sm:col-span-1 max-w-[220px] md:max-w-none mx-auto md:mx-0 w-full' : ''}`}
+              className={`card p-3 sm:p-4 flex flex-col items-center text-center gap-2 sm:gap-2.5 transition-all duration-200 cursor-pointer rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${c.primary ? 'border-sky-300/80 shadow-xs' : ''
+                } ${idx === 4 ? 'col-span-2 sm:col-span-1 max-w-[220px] md:max-w-none mx-auto md:mx-0 w-full' : ''}`}
             >
               {c.primary && (
                 <span className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-sky-400 text-white text-[9px] font-bold shadow-2xs">
@@ -2024,11 +2107,10 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
         exit={{ opacity: 0, scale: 0.92, y: 25 }}
         transition={{ type: 'spring', damping: 26, stiffness: 280 }}
         onClick={e => e.stopPropagation()}
-        className={`relative w-full bg-white shadow-2xl border border-sky-100 flex flex-col overflow-hidden transition-all duration-300 ${
-          isExpanded
-            ? 'max-w-[98vw] h-[97vh] rounded-2xl'
-            : 'max-w-5xl max-h-[82dvh] h-[80dvh] sm:max-h-[90dvh] sm:h-[86dvh] rounded-2xl sm:rounded-3xl'
-        }`}
+        className={`relative w-full bg-white shadow-2xl border border-sky-100 flex flex-col overflow-hidden transition-all duration-300 ${isExpanded
+          ? 'max-w-[98vw] h-[97vh] rounded-2xl'
+          : 'max-w-5xl max-h-[82dvh] h-[80dvh] sm:max-h-[90dvh] sm:h-[86dvh] rounded-2xl sm:rounded-3xl'
+          }`}
       >
         {/* Card Header / Window Controls */}
         <div className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white/98 sm:bg-white/95 border-b border-sky-100/80 gap-2 sm:gap-3">
@@ -2054,11 +2136,10 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
                   key={tab.id}
                   type="button"
                   onClick={() => onNavigate(tab.id)}
-                  className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-all cursor-pointer ${
-                    activePage === tab.id
-                      ? 'bg-sky-400 text-white shadow-xs'
-                      : 'text-sky-500 hover:text-sky-700 hover:bg-sky-100/60'
-                  }`}
+                  className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-all cursor-pointer ${activePage === tab.id
+                    ? 'bg-sky-400 text-white shadow-xs'
+                    : 'text-sky-500 hover:text-sky-700 hover:bg-sky-100/60'
+                    }`}
                 >
                   <tab.icon size={12} className="sm:size-[13px]" />
                   <span className="hidden sm:inline">{tab.label}</span>
@@ -2156,6 +2237,13 @@ export default function App() {
   const [currency, setCurrency] = useState<Currency>('usd')
   const toggle = useCallback(() => setCurrency(c => c === 'usd' ? 'idr' : 'usd'), [])
   const [activePage, setActivePage] = useState<ActivePage | null>(null)
+
+  // Prefetch and randomize portfolio items in the background on initial web load / refresh
+  useEffect(() => {
+    if (!isAdmin) {
+      loadAndShufflePortfolios()
+    }
+  }, [isAdmin])
 
   // Listen to browser navigation / URL changes for secret /cyela route
   useEffect(() => {

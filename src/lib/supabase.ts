@@ -43,12 +43,30 @@ export function getThumbnailUrl(url: string, size = 500, quality = 80): string {
 const CACHE_KEY = 'mittsunee_portfolios_v2'
 const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
 
+type CacheClearListener = () => void
+const cacheClearListeners: CacheClearListener[] = []
+
+export function registerCacheClearListener(listener: CacheClearListener): () => void {
+  cacheClearListeners.push(listener)
+  return () => {
+    const idx = cacheClearListeners.indexOf(listener)
+    if (idx !== -1) cacheClearListeners.splice(idx, 1)
+  }
+}
+
 export function clearPortfolioCache(): void {
   if (typeof window !== 'undefined') {
     try {
       sessionStorage.removeItem(CACHE_KEY)
     } catch {
       // Ignore cache clear error
+    }
+  }
+  for (const listener of cacheClearListeners) {
+    try {
+      listener()
+    } catch (e) {
+      console.error('Error in cache clear listener:', e)
     }
   }
 }
