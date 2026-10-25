@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://mittsunee.art/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://mittsunee.art/Banner.png</image:loc>
+      <image:title>Mittsunee Anime Art Commission Portfolio Banner</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mittsunee.art/Original%20Character.webp</image:loc>
+      <image:title>Mittsunee Mascot Character</image:title>
+    </image:image>
+  </url>
+</urlset>

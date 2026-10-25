@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Prevent search engines from indexing the secret admin panel
+Disallow: /cyela
+Disallow: /cyela/
+Disallow: /#cyela
+Disallow: /#/cyela
+
+# Sitemap location
+Sitemap: https://mittsunee.art/sitemap.xml

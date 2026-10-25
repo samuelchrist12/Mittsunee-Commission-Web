@@ -37,8 +37,8 @@ Replace the `<head>` section with the following comprehensive metadata:
     <meta name="author" content="Mittsunee" />
     <meta name="robots" content="index, follow" />
     
-    <!-- Canonical URL (Change domain once custom domain is live) -->
-    <link rel="canonical" href="https://mittsunee.com/" />
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://mittsunee.art/" />
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -47,10 +47,10 @@ Replace the `<head>` section with the following comprehensive metadata:
 
     <!-- Open Graph / Facebook / Discord / WhatsApp -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mittsunee.com/" />
+    <meta property="og:url" content="https://mittsunee.art/" />
     <meta property="og:title" content="🌸 Mittsunee | Anime Art & Commission Portfolio" />
     <meta property="og:description" content="Character Art · Chibi · Live2D Model Art. Explore gallery, transparent price list (USD & IDR), and order guidelines." />
-    <meta property="og:image" content="https://mittsunee.com/og-banner.png" />
+    <meta property="og:image" content="https://mittsunee.art/og-banner.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Mittsunee Commission Portfolio Banner" />
@@ -63,7 +63,7 @@ Replace the `<head>` section with the following comprehensive metadata:
     <meta name="twitter:creator" content="@Mittsunee" />
     <meta name="twitter:title" content="🌸 Mittsunee | Anime Art & Commission Portfolio" />
     <meta name="twitter:description" content="Anime Character Art · Chibi · Live2D Model Art. Commissions Open on VGen & direct inquiries." />
-    <meta name="twitter:image" content="https://mittsunee.com/og-banner.png" />
+    <meta name="twitter:image" content="https://mittsunee.art/og-banner.png" />
 
     <!-- Google Fonts: Fredoka -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,8 +85,8 @@ Place this script block right before the closing `</head>` tag in `index.html`. 
       "@type": "VisualArtist",
       "name": "Mittsunee",
       "alternateName": ["Tasya", "Mittsunee Studio"],
-      "url": "https://mittsunee.com",
-      "image": "https://mittsunee.com/Original%20Character.webp",
+      "url": "https://mittsunee.art",
+      "image": "https://mittsunee.art/Original%20Character.webp",
       "description": "Freelance anime character illustrator, chibi artist, and Live2D model designer.",
       "sameAs": [
         "https://vgen.co/Mittsunee",
@@ -166,7 +166,7 @@ Disallow: /#cyela
 Disallow: /#/cyela
 
 # Sitemap location
-Sitemap: https://mittsunee.com/sitemap.xml
+Sitemap: https://mittsunee.art/sitemap.xml
 ```
 
 ---
@@ -179,7 +179,7 @@ Target path: `C:\Users\Mueee\Documents\Mueee\Website\MittsuneeWeb\public\sitemap
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mittsunee.com/</loc>
+    <loc>https://mittsunee.art/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -258,6 +258,6 @@ Once deployed, verify your SEO implementation with these free official tools:
 3. **Twitter / X Card Validator**:  
    Verify large preview cards: [https://cards-dev.twitter.com/validator](https://cards-dev.twitter.com/validator)
 4. **Google Search Console**:  
-   - Add property: `https://mittsunee.com/`
-   - Submit sitemap: `https://mittsunee.com/sitemap.xml`
+   - Add property: `https://mittsunee.art/`
+   - Submit sitemap: `https://mittsunee.art/sitemap.xml`
    - Request indexing for the homepage.

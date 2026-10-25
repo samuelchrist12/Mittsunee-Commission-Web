@@ -1078,7 +1078,7 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
           {!imgLoaded && (
             <img
               src={getThumbnailUrl(item.image)}
-              alt={item.title}
+              alt={`Mittsunee Anime Art - ${item.title} (${item.category} commission preview)`}
               className="absolute max-h-[48vh] sm:max-h-[54vh] md:max-h-[58vh] w-auto max-w-full object-contain rounded-xl select-none filter blur-xs opacity-60 pointer-events-none transition-opacity"
             />
           )}
@@ -1102,7 +1102,7 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
               ref={imgRef}
               key={item.id}
               src={item.image}
-              alt={item.title}
+              alt={`Mittsunee Anime Illustration - ${item.title} - ${item.subtitle}`}
               onLoad={() => setImgLoaded(true)}
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: imgLoaded ? 1 : 0, scale: 1 }}
@@ -1348,7 +1348,7 @@ function PortfolioCard({
           <img
             ref={imgRef}
             src={currentSrc}
-            alt={item.title}
+            alt={`Mittsunee Anime Art - ${item.title} (${item.category} commission)`}
             loading={index < 4 ? "eager" : "lazy"}
             decoding="async"
             onLoad={() => setIsLoaded(true)}

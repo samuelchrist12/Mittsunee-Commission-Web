@@ -598,6 +598,7 @@ async function buildDocx() {
 
           // ─── 3. CONTACT & ORDER ───
           createSectionHeading('3. OFFICIAL ORDER & CONTACT CHANNELS', '📬'),
+          createBullet('Official Website: https://mittsunee.art'),
           createBullet('VGen (Primary Order Platform): https://vgen.co/Mittsunee'),
           createBullet('X / Twitter: https://x.com/Mittsunee'),
           createBullet('Instagram: https://www.instagram.com/mittsunee/'),

@@ -74,14 +74,14 @@ Setelah mengaudit file `index.html` yang ada di proyek, berikut temuan dan area 
 <meta name="keywords" content="Mittsunee, anime art commission, jasa gambar anime, chibi commission, live2d model art, character designer, vgen artist, komisi vtuber" />
 <meta name="author" content="Mittsunee" />
 <meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://mittsunee.com/" />
+<link rel="canonical" href="https://mittsunee.art/" />
 
 <!-- Open Graph / Facebook / Discord -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://mittsunee.com/" />
+<meta property="og:url" content="https://mittsunee.art/" />
 <meta property="og:title" content="🌸 Mittsunee | Art & Commission Portfolio" />
 <meta property="og:description" content="Anime Character Illustrations, Chibi, & Live2D Model Art. Explore gallery, price list (USD/IDR), and commission guidelines." />
-<meta property="og:image" content="https://mittsunee.com/og-banner.png" />
+<meta property="og:image" content="https://mittsunee.art/og-banner.png" />
 <meta property="og:site_name" content="Mittsunee Studio" />
 
 <!-- Twitter / X Cards -->
@@ -90,7 +90,7 @@ Setelah mengaudit file `index.html` yang ada di proyek, berikut temuan dan area 
 <meta name="twitter:creator" content="@Mittsunee" />
 <meta name="twitter:title" content="🌸 Mittsunee | Anime Art & Commission Portfolio" />
 <meta name="twitter:description" content="Character Art · Chibi · Live2D Model Art. Commissions Open on VGen & direct channels." />
-<meta name="twitter:image" content="https://mittsunee.com/og-banner.png" />
+<meta name="twitter:image" content="https://mittsunee.art/og-banner.png" />
 ```
 
 ---
@@ -106,8 +106,8 @@ Tambahkan skrip ini di `<head>` pada `index.html` untuk memicu *Rich Snippet* di
   "@type": "VisualArtist",
   "name": "Mittsunee",
   "alternateName": "Tasya",
-  "url": "https://mittsunee.com",
-  "image": "https://mittsunee.com/Original%20Character.webp",
+  "url": "https://mittsunee.art",
+  "image": "https://mittsunee.art/Original%20Character.webp",
   "description": "Freelance anime character illustrator, chibi artist, and Live2D model designer.",
   "sameAs": [
     "https://vgen.co/Mittsunee",
@@ -178,15 +178,16 @@ Allow: /
 Disallow: /cyela
 Disallow: /#cyela
 
-Sitemap: https://mittsunee.com/sitemap.xml
+Sitemap: https://mittsunee.art/sitemap.xml
 ```
+*(Memblokir perayap Google agar tidak mengindeks halaman login admin rahasia `/cyela`).*
 
 #### 2. `public/sitemap.xml`:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mittsunee.com/</loc>
+    <loc>https://mittsunee.art/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -198,15 +199,24 @@ Sitemap: https://mittsunee.com/sitemap.xml
 
 ## 🖼️ 5. Image SEO (Google Images Traffic Engine)
 
-1. **Slug Nama File Gambar**: Gunakan penamaan gambar deskriptif:
-   - `futsuri-original-character-anime-illustration-mittsunee.webp`
+Karena Google Images adalah salah satu pintu masuk terbesar bagi klien seni:
+1. **Slug Nama File Gambar**: Sebelum diupload via panel admin atau FFmpeg, beri nama file yang deskriptif:
+   - *Kurang optimal*: `01_Futsuri.webp`, `IMG_2234.webp`
+   - *Sangat optimal*: `futsuri-original-character-anime-illustration-mittsunee.webp`
 2. **Descriptive Alt Text**:
-   - `alt="Mittsunee Anime Art - Futsuri (Original Character commission)"`
-3. **Core Web Vitals & WebP**: Tetap gunakan format WebP dan CDN rendering Supabase agar score LCP (Largest Contentful Paint) tetap hijau.
+   - Ganti `alt={item.title}` menjadi:
+     ```tsx
+     alt={`Mittsunee Anime Art - ${item.title} (${item.category} commission)`}
+     ```
+3. **Dimensi & WebP**: Sistem yang saat ini sudah berjalan (WebP + CDN rendering `resize=contain`) sudah sangat bagus untuk Core Web Vitals (LCP & CLS).
 
 ---
 
 ## 🌐 6. Sinergi Off-Page & Social SEO
 
-1. **Backlink Profil Resmi**: Tautkan link website di bio Twitter/X, Instagram, VGen, Facebook, Pixiv, Cara.
+1. **Backlink Profil Resmi**: Pasang link website portofolio di:
+   - Bio Twitter/X (`x.com/Mittsunee`)
+   - Bio Instagram (`instagram.com/mittsunee`)
+   - Website link di profil VGen (`vgen.co/Mittsunee`)
+   - Profil ArtStation / Pixiv / Cara
 2. **Anchor Text Consistency**: Selalu gunakan branding yang konsisten: `"Mittsunee - Anime Illustrator & Live2D Artist"`.
