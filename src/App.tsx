@@ -678,30 +678,39 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
 
       {/* ─── MOBILE VIEW (< md): Layout matching user mockup ─── */}
       <div className="md:hidden flex flex-col items-center text-center gap-1.5 sm:gap-2 w-full max-w-sm mx-auto my-auto select-none">
-        {/* 1. Mascot Character with soft circular backdrop */}
-        <div className="relative flex items-center justify-center w-24 h-24 my-0.5">
-          <div className="w-20 h-20 rounded-full bg-sky-100/50 border border-dashed border-sky-200/70 absolute inset-0 m-auto pointer-events-none" />
+        {/* 1. Mittsunee Logo at the very top */}
+        <div className="flex justify-center pt-0.5 pb-0.5">
+          <img
+            src="/Type%20Logo2.png"
+            alt="Mittsunee"
+            className="h-9 sm:h-12 w-auto object-contain select-none drop-shadow-xs"
+          />
+        </div>
+
+        {/* 2. Mascot Character with soft circular backdrop */}
+        <div className="relative flex items-center justify-center w-20 h-20 my-0.5">
+          <div className="w-17 h-17 rounded-full bg-sky-100/50 border border-dashed border-sky-200/70 absolute inset-0 m-auto pointer-events-none" />
           <img
             src="/Original Character2.png"
             alt="Mittsunee Mascot"
             className="relative z-10 w-full h-full object-contain drop-shadow-sm select-none animate-gentle-float"
-            width={96}
-            height={96}
+            width={76}
+            height={76}
             loading="eager"
             decoding="async"
           />
         </div>
 
-        {/* 2. Status Badges */}
+        {/* 3. Status Badges */}
         <div className="flex items-center justify-center gap-1.5">
-          <span className="tag text-[9px] py-0.5 px-2.5 font-medium">
-            <Sparkles size={10} />
+          <span className="tag text-[9px] py-0.5 px-2 font-medium">
+            <Sparkles size={9} />
             Illustrator
           </span>
           <button
             type="button"
             onClick={() => onNavigate('pricing')}
-            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${COMMISSION_STATUS === 'open'
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold cursor-pointer transition-all hover:scale-105 ${COMMISSION_STATUS === 'open'
               ? 'bg-green-50 text-green-700 border border-green-200 shadow-2xs'
               : 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
               }`}
@@ -712,22 +721,18 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
           </button>
         </div>
 
-        {/* 3. Mittsunee Logo */}
-        <div className="flex justify-center py-0.5">
-          <img
-            src="/Type%20Logo2.png"
-            alt="Mittsunee"
-            className="h-10 sm:h-12 w-auto object-contain select-none"
-          />
-        </div>
-
-        {/* 4. Tagline */}
-        <p className="text-sky-500/80 text-[10px] font-medium tracking-wide">
-          Character Art · Chibi · Live2D ✨
+        {/* 4. Bio text matching desktop */}
+        <p className="text-sky-500/85 text-[10px] sm:text-xs leading-relaxed max-w-[280px] mx-auto px-1">
+          Hi domo~ You can call me{' '}
+          <span className="text-sky-400 font-semibold">Mittsu</span> or{' '}
+          <span className="text-sky-400 font-semibold">Mi chan (she/her)</span>,<br />
+          I'm an artist from Indonesia working as a full time Illustrator and V-artist!{' '}
+          Mostly working with commissions <br />
+          <span className="inline-block mt-0.5">(*´∀｀)_🍵</span>
         </p>
 
         {/* 5. 2x2 Grid Quick Navigation Cards */}
-        <div className="grid grid-cols-2 gap-2 w-full max-w-[270px] mx-auto pt-1">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full max-w-[260px] mx-auto pt-0.5">
           {navItems.map(item => (
             <motion.button
               key={item.id}
@@ -735,27 +740,27 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
               onClick={() => onNavigate(item.id)}
               whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
-              className="flex flex-col items-center justify-center py-2 px-3 rounded-2xl bg-white/95 hover:bg-sky-50 border border-sky-100/90 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer group"
+              className="flex flex-col items-center justify-center py-1.5 px-2.5 rounded-xl sm:rounded-2xl bg-white/95 hover:bg-sky-50 border border-sky-100/90 hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all text-center cursor-pointer group"
             >
-              <div className="w-7 h-7 rounded-full bg-sky-50 group-hover:bg-sky-100 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-1 transition-colors">
-                <item.icon size={15} />
+              <div className="w-6.5 h-6.5 rounded-full bg-sky-50 group-hover:bg-sky-100 flex items-center justify-center text-sky-400 group-hover:text-sky-500 mb-0.5 transition-colors">
+                <item.icon size={14} />
               </div>
-              <span className="text-xs font-bold text-sky-700 group-hover:text-sky-800 leading-tight">
+              <span className="text-[11px] sm:text-xs font-bold text-sky-700 group-hover:text-sky-800 leading-tight">
                 {item.title}
               </span>
             </motion.button>
           ))}
         </div>
 
-        {/* 7. Action Row: CTA Button + 4 Social Circles */}
-        <div className="flex items-center justify-center gap-2 pt-0.5">
+        {/* 6. Action Row: CTA Button + 5 Social Circles */}
+        <div className="flex items-center justify-center gap-1.5 pt-0.5">
           <a
             href="https://vgen.co/Mittsunee"
             target="_blank"
             rel="noreferrer"
-            className="btn-primary !py-1.5 !px-3 text-xs flex items-center gap-1 shadow-2xs"
+            className="btn-primary !py-1 !px-2.5 text-[11px] sm:text-xs flex items-center gap-1 shadow-2xs"
           >
-            <ShoppingCart size={12} />
+            <ShoppingCart size={11} />
             <span>Order via VGen</span>
           </a>
 
@@ -769,9 +774,9 @@ function HeroSection({ onNavigate }: HeroSectionProps) {
                 title={s.label}
                 whileHover={{ scale: 1.15, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-7 h-7 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 shadow-2xs transition-colors"
+                className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full card flex items-center justify-center text-sky-400 hover:text-sky-500 shadow-2xs transition-colors"
               >
-                <s.icon size={13} />
+                <s.icon size={12} />
               </motion.a>
             ))}
           </div>
@@ -1153,9 +1158,9 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
             onClick={onClose}
             onMouseEnter={() => setShowLens(false)}
             title="Close Preview (ESC)"
-            className="absolute top-3.5 right-3.5 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-rose-500 text-sky-600 hover:text-white backdrop-blur shadow-md flex items-center justify-center transition-all cursor-pointer group"
+            className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-20 w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-white/95 hover:bg-rose-500 text-sky-600 hover:text-white backdrop-blur shadow-md flex items-center justify-center transition-all cursor-pointer group"
           >
-            <X size={16} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+            <X size={15} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
           </button>
 
           {/* Prev / Next navigation buttons */}
@@ -1164,30 +1169,30 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
             onClick={prev}
             onMouseEnter={() => setShowLens(false)}
             title="Previous Artwork (Left Arrow)"
-            className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
           <button
             type="button"
             onClick={next}
             onMouseEnter={() => setShowLens(false)}
             title="Next Artwork (Right Arrow)"
-            className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-sky-600 hover:text-sky-800 backdrop-blur shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </div>
 
         {/* Info bar footer */}
-        <div className="px-5 py-3.5 bg-white border-t border-sky-100 flex items-center justify-between shrink-0">
-          <div className="min-w-0 pr-3">
-            <p className="font-bold text-sky-950 text-sm truncate" title={item.title}>
+        <div className="px-3.5 sm:px-5 py-2.5 sm:py-3.5 bg-white border-t border-sky-100 flex items-center justify-between shrink-0">
+          <div className="min-w-0 pr-2 sm:pr-3">
+            <p className="font-bold text-sky-950 text-xs sm:text-sm truncate" title={item.title}>
               {item.title}
             </p>
-            <p className="text-sky-400 text-xs truncate mt-0.5">{item.subtitle}</p>
+            <p className="text-sky-400 text-[10px] sm:text-xs truncate mt-0.5">{item.subtitle}</p>
           </div>
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Desktop zoom hint */}
             {isDesktop && (
               <span className="hidden lg:inline-flex items-center gap-1 text-[11px] text-sky-400/90 font-medium bg-sky-50 px-2 py-0.5 rounded-full border border-sky-100">
@@ -1195,10 +1200,10 @@ function Lightbox({ items, initialIndex, onClose }: LightboxProps) {
                 <span>Hover to zoom</span>
               </span>
             )}
-            <span className="text-xs text-sky-400 font-medium">
+            <span className="text-[10px] sm:text-xs text-sky-400 font-medium">
               {current + 1} / {items.length}
             </span>
-            <span className="tag text-[11px] capitalize px-2.5 py-0.5 font-semibold">
+            <span className="tag text-[9.5px] sm:text-[11px] capitalize px-2 sm:px-2.5 py-0.5 font-semibold">
               {item.category}
             </span>
           </div>
@@ -1515,7 +1520,7 @@ function PortfolioSection() {
   }, [loadNextBatch, visibleCount, hasMore, filter])
 
   return (
-    <section ref={sectionRef} id="portfolio" className="py-4 sm:py-10 px-2 sm:px-6">
+    <section ref={sectionRef} id="portfolio" className="py-3 sm:py-8 px-2 sm:px-6">
       <div className="max-w-5xl mx-auto">
         {/* Step 1: Overall Section Loading Animation */}
         {isInitialLoading ? (
@@ -1527,11 +1532,11 @@ function PortfolioSection() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="text-center mb-4 sm:mb-10"
+              className="text-center mb-3 sm:mb-8"
             >
-              <p className="text-sky-400 text-xs sm:text-sm font-medium mb-1">✦ My Works</p>
-              <h2 className="section-title text-xl sm:text-3xl">Portfolio Gallery</h2>
-              <p className="section-subtitle mt-1 max-w-md mx-auto text-[11px] sm:text-sm">
+              <p className="text-sky-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 sm:mb-1">✦ My Works</p>
+              <h2 className="section-title">Portfolio Gallery</h2>
+              <p className="section-subtitle max-w-md mx-auto px-2">
                 A glimpse into my art. Click any piece to view it in full.
               </p>
             </motion.div>
@@ -1541,14 +1546,14 @@ function PortfolioSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-10"
+              className="flex flex-wrap justify-center gap-1 sm:gap-2 mb-3.5 sm:mb-8"
             >
               {FILTER_TABS.map(tab => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => handleFilterChange(tab.id)}
-                  className={`px-3 sm:px-5 py-1 sm:py-2 rounded-full text-[11px] sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${filter === tab.id
+                  className={`px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10.5px] sm:text-xs md:text-sm font-semibold transition-all duration-200 cursor-pointer ${filter === tab.id
                     ? 'bg-sky-400 text-white shadow-xs'
                     : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
                     }`}
@@ -1661,11 +1666,11 @@ function PriceDisplay({ usd, idr }: { usd: number; idr: number }) {
     <AnimatePresence mode="wait">
       <motion.span
         key={currency}
-        initial={{ opacity: 0, y: -8 }}
+        initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 8 }}
+        exit={{ opacity: 0, y: 6 }}
         transition={{ duration: 0.2 }}
-        className="font-display text-xl text-sky-500"
+        className="font-display text-sm sm:text-base md:text-xl text-sky-500"
       >
         {currency === 'usd' ? formatUSD(usd) : formatIDR(idr)}
       </motion.span>
@@ -1679,24 +1684,24 @@ function CommissionCard({ category }: { category: CommissionCategory }) {
   return (
     <motion.div
       variants={fadeUp}
-      className="card p-6 flex flex-col gap-5"
+      className="card p-3.5 sm:p-6 flex flex-col gap-3.5 sm:gap-5"
     >
       {/* Header */}
-      <div className="flex items-start gap-3">
-        <span className="text-3xl">{category.emoji}</span>
+      <div className="flex items-start gap-2.5 sm:gap-3">
+        <span className="text-2xl sm:text-3xl">{category.emoji}</span>
         <div>
-          <h3 className="font-display text-xl text-sky-600">{category.name}</h3>
-          <p className="text-sky-400/80 text-sm leading-relaxed mt-0.5">{category.desc}</p>
+          <h3 className="font-display text-base sm:text-xl text-sky-600">{category.name}</h3>
+          <p className="text-sky-400/80 text-[11px] sm:text-xs leading-relaxed mt-0.5">{category.desc}</p>
         </div>
       </div>
 
       {category.types.map(type => (
-        <div key={type.name} className="flex flex-col gap-3">
+        <div key={type.name} className="flex flex-col gap-2.5 sm:gap-3">
           {category.types.length > 1 && (
-            <h4 className="text-xs font-semibold text-sky-400 uppercase tracking-wider">{type.name}</h4>
+            <h4 className="text-[10px] sm:text-xs font-semibold text-sky-400 uppercase tracking-wider">{type.name}</h4>
           )}
           {type.note && (
-            <p className="text-xs text-sky-300 bg-sky-50 rounded-lg px-3 py-2 leading-relaxed">{type.note}</p>
+            <p className="text-[10px] sm:text-xs text-sky-400 bg-sky-50/80 rounded-lg px-2.5 py-1.5 sm:px-3 sm:py-2 leading-relaxed">{type.note}</p>
           )}
 
           {/* Price rows */}
@@ -1704,10 +1709,10 @@ function CommissionCard({ category }: { category: CommissionCategory }) {
             {type.prices.map((row, i) => (
               <div
                 key={row.shot}
-                className={`flex items-center justify-between px-4 py-3 ${i % 2 === 0 ? 'bg-sky-50/50' : 'bg-white'
+                className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 ${i % 2 === 0 ? 'bg-sky-50/50' : 'bg-white'
                   }`}
               >
-                <span className="text-sky-600 font-medium text-sm">{row.shot}</span>
+                <span className="text-sky-600 font-medium text-xs sm:text-sm">{row.shot}</span>
                 <PriceDisplay usd={row.usd} idr={row.idr} />
               </div>
             ))}
@@ -1716,10 +1721,10 @@ function CommissionCard({ category }: { category: CommissionCategory }) {
           {/* Add-ons */}
           {type.addons.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">Add-ons</p>
-              <div className="flex flex-col gap-1.5">
+              <p className="text-[10px] sm:text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1.5">Add-ons</p>
+              <div className="flex flex-col gap-1 sm:gap-1.5">
                 {type.addons.map(addon => (
-                  <div key={addon.name} className="flex items-center justify-between text-xs">
+                  <div key={addon.name} className="flex items-center justify-between text-[11px] sm:text-xs">
                     <span className="text-sky-500">+ {addon.name}</span>
                     <span className="font-medium text-sky-400">
                       {addon.label
@@ -1744,7 +1749,7 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
   const activeCategory = COMMISSION_DATA.find(c => c.id === activeTab)!
 
   return (
-    <section id="pricing" className="py-6 sm:py-10 px-4 sm:px-6">
+    <section id="pricing" className="py-3 sm:py-8 px-2.5 sm:px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <motion.div
@@ -1752,11 +1757,11 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="text-center mb-12"
+          className="text-center mb-3.5 sm:mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sky-400 text-sm font-medium mb-2">✦ Pricing</motion.p>
+          <motion.p variants={fadeUp} className="text-sky-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 sm:mb-1">✦ Pricing</motion.p>
           <motion.h2 variants={fadeUp} className="section-title">Commission Prices</motion.h2>
-          <motion.p variants={fadeUp} className="section-subtitle mt-2 mb-6">
+          <motion.p variants={fadeUp} className="section-subtitle mt-0.5 mb-3 sm:mb-6 max-w-md mx-auto px-2">
             Applicable for personal use & VTuber support · Estimated turnaround: 1–3 weeks
           </motion.p>
           {/* Currency toggle */}
@@ -1766,13 +1771,13 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
         </motion.div>
 
         {/* Category tabs */}
-        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-1 sm:gap-2 mb-3.5 sm:mb-6">
           {COMMISSION_DATA.map(cat => (
             <button
               key={cat.id}
               type="button"
               onClick={() => setActiveTab(cat.id)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === cat.id
+              className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold transition-all duration-200 cursor-pointer ${activeTab === cat.id
                 ? 'bg-sky-400 text-white shadow-xs'
                 : 'bg-white/85 text-sky-500 hover:text-sky-700 hover:bg-sky-50 border border-sky-100/80'
                 }`}
@@ -1803,9 +1808,9 @@ function PricingSection({ onNavigateContact }: { onNavigateContact?: () => void 
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="mt-8 text-center"
+          className="mt-4 sm:mt-8 text-center"
         >
-          <p className="text-sky-400 text-sm">
+          <p className="text-sky-400 text-xs sm:text-sm">
             Ready to order?{' '}
             <a href="https://vgen.co/Mittsunee" target="_blank" rel="noreferrer" className="text-sky-500 font-semibold hover:text-sky-400 underline underline-offset-2">
               Place your order via VGen
@@ -1848,10 +1853,10 @@ function ToSAccordion({ section }: { section: ToSSection }) {
     <div className="card overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-4 px-6 py-4 text-left group"
+        className="w-full flex items-center gap-2.5 sm:gap-4 px-3.5 sm:px-6 py-2.5 sm:py-4 text-left group"
       >
-        <span className="font-display text-sky-200 text-lg w-8 flex-shrink-0">{section.id}</span>
-        <span className="flex-1 font-semibold text-sky-600 text-base group-hover:text-sky-500 transition-colors">
+        <span className="font-display text-sky-200 text-sm sm:text-lg w-6 sm:w-8 flex-shrink-0">{section.id}</span>
+        <span className="flex-1 font-semibold text-sky-600 text-xs sm:text-base group-hover:text-sky-500 transition-colors">
           {section.title}
         </span>
         <motion.div
@@ -1859,7 +1864,7 @@ function ToSAccordion({ section }: { section: ToSSection }) {
           transition={{ duration: 0.25, ease: 'easeInOut' }}
           className="flex-shrink-0 text-sky-300"
         >
-          <ChevronDown size={18} />
+          <ChevronDown size={16} className="sm:size-[18px]" />
         </motion.div>
       </button>
 
@@ -1872,11 +1877,11 @@ function ToSAccordion({ section }: { section: ToSSection }) {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-5 pt-1 border-t border-sky-50">
+            <div className="px-3.5 sm:px-6 pb-3.5 sm:pb-5 pt-1 border-t border-sky-50">
               {/* Table (for Commercial Usage) */}
               {section.table && (
-                <div className="mb-4 rounded-xl overflow-hidden border border-sky-100">
-                  <div className="grid grid-cols-3 text-xs font-semibold text-sky-400 bg-sky-50 px-4 py-2 gap-2">
+                <div className="mb-3 sm:mb-4 rounded-xl overflow-hidden border border-sky-100">
+                  <div className="grid grid-cols-3 text-[10px] sm:text-xs font-semibold text-sky-400 bg-sky-50 px-2.5 sm:px-4 py-1.5 sm:py-2 gap-1.5">
                     <span>Tier</span>
                     <span>Usage</span>
                     <span className="text-right">Fee</span>
@@ -1884,7 +1889,7 @@ function ToSAccordion({ section }: { section: ToSSection }) {
                   {section.table.map((row, i) => (
                     <div
                       key={row.tier}
-                      className={`grid grid-cols-3 text-xs px-4 py-2.5 gap-2 items-center ${i % 2 === 0 ? 'bg-white' : 'bg-sky-50/50'}`}
+                      className={`grid grid-cols-3 text-[10px] sm:text-xs px-2.5 sm:px-4 py-1.5 sm:py-2.5 gap-1.5 items-center ${i % 2 === 0 ? 'bg-white' : 'bg-sky-50/50'}`}
                     >
                       <span className="font-medium text-sky-600">{row.tier}</span>
                       <span className="text-sky-400">{row.usage}</span>
@@ -1895,10 +1900,10 @@ function ToSAccordion({ section }: { section: ToSSection }) {
               )}
 
               {/* Rules list */}
-              <ul className="flex flex-col gap-2.5">
+              <ul className="flex flex-col gap-2 sm:gap-2.5">
                 {section.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-sky-600/90 leading-relaxed">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-sky-100 flex-shrink-0 flex items-center justify-center text-sky-500 text-xs font-bold">
+                  <li key={i} className="flex items-start gap-2 sm:gap-2.5 text-xs sm:text-sm text-sky-600/90 leading-relaxed">
+                    <span className="mt-0.5 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-sky-100 flex-shrink-0 flex items-center justify-center text-sky-500 text-[9px] sm:text-xs font-bold">
                       {i + 1}
                     </span>
                     <span className="flex-1">{renderFormattedText(item)}</span>
@@ -1915,18 +1920,18 @@ function ToSAccordion({ section }: { section: ToSSection }) {
 
 function ToSSection() {
   return (
-    <section id="tos" className="py-6 sm:py-10 px-4 sm:px-6">
+    <section id="tos" className="py-3 sm:py-8 px-2.5 sm:px-6">
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="text-center mb-12"
+          className="text-center mb-4 sm:mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sky-400 text-sm font-medium mb-2">✦ Rules</motion.p>
+          <motion.p variants={fadeUp} className="text-sky-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 sm:mb-1">✦ Rules</motion.p>
           <motion.h2 variants={fadeUp} className="section-title">Terms of Service</motion.h2>
-          <motion.p variants={fadeUp} className="section-subtitle mt-2">
+          <motion.p variants={fadeUp} className="section-subtitle mt-0.5 max-w-md mx-auto px-2">
             Please read carefully before placing a commission.
           </motion.p>
         </motion.div>
@@ -1936,7 +1941,7 @@ function ToSSection() {
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-2 sm:gap-3"
         >
           {TOS_DATA.map(section => (
             <motion.div key={section.id} variants={fadeUp}>
@@ -1950,7 +1955,7 @@ function ToSSection() {
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="text-center text-sky-400 text-sm mt-8"
+          className="text-center text-sky-400 text-xs sm:text-sm mt-4 sm:mt-8"
         >
           By commissioning me, you agree to these terms. ✦
         </motion.p>
@@ -2001,7 +2006,7 @@ function ContactSection() {
   ]
 
   return (
-    <section id="contact" className="py-4 sm:py-8 px-3 sm:px-6 flex-1 flex flex-col justify-center my-auto">
+    <section id="contact" className="py-3 sm:py-6 px-2.5 sm:px-6 flex-1 flex flex-col justify-center my-auto">
       <div className="max-w-4xl mx-auto w-full my-auto">
         {/* Header */}
         <motion.div
@@ -2009,11 +2014,11 @@ function ContactSection() {
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="text-center mb-6 sm:mb-8"
+          className="text-center mb-3.5 sm:mb-6"
         >
-          <motion.p variants={fadeUp} className="text-sky-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">✦ Get In Touch</motion.p>
-          <motion.h2 variants={fadeUp} className="section-title text-2xl sm:text-3xl">Contact & Order</motion.h2>
-          <motion.p variants={fadeUp} className="section-subtitle mt-1 sm:mt-2 text-xs sm:text-sm">
+          <motion.p variants={fadeUp} className="text-sky-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 sm:mb-1">✦ Get In Touch</motion.p>
+          <motion.h2 variants={fadeUp} className="section-title">Contact & Order</motion.h2>
+          <motion.p variants={fadeUp} className="section-subtitle mt-0.5 max-w-md mx-auto px-2">
             Ready to commission? Here's how to reach me!
           </motion.p>
         </motion.div>
@@ -2024,7 +2029,7 @@ function ContactSection() {
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
           variants={stagger}
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3.5 mb-4 sm:mb-6"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3.5 mb-3 sm:mb-6"
         >
           {contacts.map((c, idx) => (
             <motion.a
@@ -2034,27 +2039,27 @@ function ContactSection() {
               rel="noreferrer"
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className={`card p-3 sm:p-4 flex flex-col items-center text-center gap-2 sm:gap-2.5 transition-all duration-200 cursor-pointer rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${c.primary ? 'border-sky-300/80 shadow-xs' : ''
+              className={`card p-2.5 sm:p-4 flex flex-col items-center text-center gap-1.5 sm:gap-2.5 transition-all duration-200 cursor-pointer rounded-xl sm:rounded-2xl bg-white hover:border-sky-300 hover:shadow-md group relative ${c.primary ? 'border-sky-300/80 shadow-xs' : ''
                 } ${idx === 4 ? 'col-span-2 sm:col-span-1 max-w-[220px] md:max-w-none mx-auto md:mx-0 w-full' : ''}`}
             >
               {c.primary && (
-                <span className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-sky-400 text-white text-[9px] font-bold shadow-2xs">
+                <span className="absolute -top-2 px-1.5 py-0.5 rounded-full bg-sky-400 text-white text-[8.5px] sm:text-[9px] font-bold shadow-2xs">
                   Main
                 </span>
               )}
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 transition-colors shrink-0">
-                <c.icon size={20} className="sm:hidden" />
+              <div className="w-8.5 h-8.5 sm:w-11 sm:h-11 rounded-full bg-sky-50 group-hover:bg-sky-100/90 flex items-center justify-center text-sky-400 group-hover:text-sky-500 transition-colors shrink-0">
+                <c.icon size={18} className="sm:hidden" />
                 <c.icon size={22} className="hidden sm:block" />
               </div>
               <div className="w-full">
                 <p className="font-bold text-xs sm:text-sm text-sky-700 group-hover:text-sky-800 leading-tight">
                   {c.label}
                 </p>
-                <p className="text-[10px] sm:text-xs text-sky-400 mt-0.5 line-clamp-1">
+                <p className="text-[9.5px] sm:text-xs text-sky-400 mt-0.5 line-clamp-1">
                   {c.description}
                 </p>
               </div>
-              <span className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-sky-500 group-hover:text-sky-600 mt-auto">
+              <span className="flex items-center gap-1 text-[9.5px] sm:text-xs font-semibold text-sky-500 group-hover:text-sky-600 mt-auto">
                 <span>{c.primary ? 'Order Now' : 'Visit Link'}</span>
                 <ExternalLink size={10} className="sm:size-[11px]" />
               </span>
@@ -2063,7 +2068,7 @@ function ContactSection() {
         </motion.div>
 
         {/* Credit note */}
-        <div className="text-center text-sky-300 text-xs mt-2 sm:mt-4">
+        <div className="text-center text-sky-400/80 text-[10.5px] sm:text-xs mt-2 sm:mt-4">
           <p>Please credit <strong>@Mittsunee</strong> when sharing commissioned works.</p>
         </div>
       </div>
@@ -2199,7 +2204,7 @@ function PageOverlayCard({ activePage, onClose, onNavigate }: PageOverlayCardPro
             href="https://vgen.co/Mittsunee"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-sky-400 hover:bg-sky-500 text-white font-semibold transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 text-xs sm:text-sm rounded-full bg-sky-400 hover:bg-sky-500 text-white font-semibold transition-all shadow-sm"
           >
             <ShoppingCart size={13} />
             <span>Order via VGen</span>
